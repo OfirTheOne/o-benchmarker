@@ -1,0 +1,1 @@
+export const CYCLES = 10000;
