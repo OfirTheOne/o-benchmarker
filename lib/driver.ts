@@ -11,4 +11,10 @@ const flags: BenchmarkerFlags = {
 };
 
 tasksGroupImportScanner(suffix)
-    .then((tasksGroups) => (new Benchmarker(flags).echo(tasksGroups)));
+    .then((tasksGroups) => {
+        if (tasksGroups.length > 0) {
+            (new Benchmarker(flags).echo(tasksGroups));
+        } else {
+            throw ('O-Benchmarker : No benchmarker tasks was found.')
+        }
+    });

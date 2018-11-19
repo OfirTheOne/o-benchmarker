@@ -9,9 +9,12 @@
     "build": "tsc",
     "start": "ts-node ./src/index.ts",
     "prod": "npm run build && npm run start",
-    "o-benchmarker": "ts-node ./benchmarker/driver.ts",
-    "benchmark": "npm run o-benchmarker **/*.benchmark.ts"
+    "o-benchmarker": "ts-node ./lib/driver.ts",
+    "benchmark": "npm run o-benchmarker **/*.benchmark.ts minfo",
+    "o-benchmarker:dist": "ts-node ./dist/driver.js",
+    "benchmark:dist": "npm run o-benchmarker:dist **/*.benchmark.ts minfo"
   },
+  "bin" : {},
   "author": "Ofir G.",
   "license": "ISC",
   "dependencies": {

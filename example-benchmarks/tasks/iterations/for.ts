@@ -1,4 +1,4 @@
-import { BenchmarkerTask } from './../../../benchmarker';
+import { BenchmarkerTask } from './../../../lib';
 import { randomArray } from './../../helpers';
 import { CYCLES } from './../../consts';
 

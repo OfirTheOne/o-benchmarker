@@ -10,8 +10,7 @@
        "baseUrl": "./src"
     },
     "include": [
-       "src/**/*.ts",
-       "benchmarker/**/*.ts",
+       "lib/**/*.ts",
     ],
     "exclude": [
        "node_modules",
