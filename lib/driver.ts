@@ -2,10 +2,14 @@ import { BenchmarkerFlags } from './models/models';
 import { Benchmarker } from './benchmarker';
 import { tasksGroupImportScanner } from "./tasks-scanner";
 
-const ARGV = process.argv.splice(2);
+const relevantArgs = process.argv.splice(2);
 
-const suffix = ARGV[0];
-const _mInfo_flag = ~(ARGV.indexOf('minfo', 1));
+const suffix = relevantArgs[0];
+if(!suffix) {
+    throw new Error('O-Benchmarker Error: first argumanet must contain a file name pattern.');
+}
+
+const _mInfo_flag = ~(relevantArgs.indexOf('minfo', 1));
 const flags: BenchmarkerFlags = {
     minfo: !!_mInfo_flag
 };
@@ -15,6 +19,9 @@ tasksGroupImportScanner(suffix)
         if (tasksGroups.length > 0) {
             (new Benchmarker(flags).echo(tasksGroups));
         } else {
-            throw ('O-Benchmarker : No benchmarker tasks was found.')
+            throw new Error('O-Benchmarker Error: No benchmarker tasks was found.')
         }
+    })
+    .catch((err) => {
+        throw err
     });

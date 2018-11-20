@@ -3,8 +3,8 @@ import * as path from 'path';
 import * as  glob  from 'glob';
 import { BenchmarkerMeasureGroup, BenchmarkerTask, BenchmarkerOptions } from '../models';
 import { isFunction } from 'util';
+import * as appRoot from 'app-root-path';
 
-const pathToRoot = path.join(__dirname, '../../');
 
 export async function tasksGroupImportScanner(suffixGlobPattern: string): Promise <BenchmarkerMeasureGroup[]> {
     const tasksModulesFiles = getAllFilesWithSuffix(suffixGlobPattern);
@@ -14,28 +14,26 @@ export async function tasksGroupImportScanner(suffixGlobPattern: string): Promis
     for (let i = 0; i < tasksModulesFiles.length; i++) {
         const file = tasksModulesFiles[i];
         try {
-            const moduleExport = await import(path.join(pathToRoot, file));
+            const moduleExport = await import(appRoot.resolve(file));
             modulesExport.push({ export: moduleExport, file});
         } catch (error) {
-            console.log(`failed to import from ${file}`, error);
+            throw new Error(`failed to import task module from ${file}`);
         }   
     }
 
     modulesExport.forEach((_module) => {
-        try {
             for (const key in (_module.export)) {
                 if (_module.export.hasOwnProperty(key)) {
                     const exportField = _module.export[key];
                     if(gaurdBenchmarkTasksGroup(exportField)) {
                         tasksGroups.push(exportField);
-                    }
+                    } 
+                    // else {
+                    //     throw new Error(`module ${_module.file} must export a BenchmarkTasksGroup type object.`);
+                    // }
                 }
             }
-        } catch (error) {
-            console.log(`module ${_module.file} must export a BenchmarkTasksGroup type object.`);                
-        }
-        
-    })
+        });
     return tasksGroups;
 }
 

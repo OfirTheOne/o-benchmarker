@@ -8,10 +8,9 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const path = require("path");
 const glob = require("glob");
 const util_1 = require("util");
-const pathToRoot = path.join(__dirname, '../../');
+const appRoot = require("app-root-path");
 function tasksGroupImportScanner(suffixGlobPattern) {
     return __awaiter(this, void 0, void 0, function* () {
         const tasksModulesFiles = getAllFilesWithSuffix(suffixGlobPattern);
@@ -20,26 +19,24 @@ function tasksGroupImportScanner(suffixGlobPattern) {
         for (let i = 0; i < tasksModulesFiles.length; i++) {
             const file = tasksModulesFiles[i];
             try {
-                const moduleExport = yield Promise.resolve().then(() => require(path.join(pathToRoot, file)));
+                const moduleExport = yield Promise.resolve().then(() => require(appRoot.resolve(file)));
                 modulesExport.push({ export: moduleExport, file });
             }
             catch (error) {
-                console.log(`failed to import from ${file}`, error);
+                throw new Error(`failed to import task module from ${file}`);
             }
         }
         modulesExport.forEach((_module) => {
-            try {
-                for (const key in (_module.export)) {
-                    if (_module.export.hasOwnProperty(key)) {
-                        const exportField = _module.export[key];
-                        if (gaurdBenchmarkTasksGroup(exportField)) {
-                            tasksGroups.push(exportField);
-                        }
+            for (const key in (_module.export)) {
+                if (_module.export.hasOwnProperty(key)) {
+                    const exportField = _module.export[key];
+                    if (gaurdBenchmarkTasksGroup(exportField)) {
+                        tasksGroups.push(exportField);
                     }
+                    // else {
+                    //     throw new Error(`module ${_module.file} must export a BenchmarkTasksGroup type object.`);
+                    // }
                 }
-            }
-            catch (error) {
-                console.log(`module ${_module.file} must export a BenchmarkTasksGroup type object.`);
             }
         });
         return tasksGroups;
