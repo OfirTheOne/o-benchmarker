@@ -7,11 +7,10 @@
   "scripts": {
     "build": "tsc",
     "start": "ts-node ./src/index.ts",
-    "benchmark:dev": "o-benchmarker-dev **/*.benchmark.ts minfo",
+    "benchmark:dev": "node ./lib/driver-exec.dev.js **/*.benchmark.ts minfo",
     "benchmark:prod": "o-benchmarker **/*.benchmark.ts minfo"
   },
   "bin": {
-    "o-benchmarker-dev": "./lib/driver-exec.dev.js",
     "o-benchmarker": "./dist/driver-exec.js"
   },
   "author": "Ofir G.",
