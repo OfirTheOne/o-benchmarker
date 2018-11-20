@@ -25,19 +25,19 @@ By executing that script the benchmarking process will be trigerd. <br><br>
 
 `o-benchmarker` script takes two arguments (as shown above) : <br>
 
-* `file-name-pattern` - [required] is a [glob pattern] to detact for files to procces as tasks and benchmark.
+* `file-name-pattern` - [required] is a [glob pattern] to detact for any files to be procces as tasks and benchmark.
 * `minfo-flag` - [optional] is flag with the literal name "minfo", if present the benchmarking report will include the executing machine info. 
 
 
-On `package.json` add a new script (E.g. "benchmark") to the `scripts` property, executing `o-benchmarker` script with the relevent parameters.<br>
+On `package.json` add a new script (E.g. "benchmark") to the `scripts` property, executing the `o-benchmarker` script with the relevent parameters.<br>
 
-Example
+Example :
 ```sh
 "scripts" : {
   "benchmark" : "o-benchmarker **/*.benchmark.ts minfo" 
 }
 ```
-the following will look in your project for files matching the `**/*.benchmark.ts` glob pettern, process its exports and attempt to benchmark it, the preduces report will include the the executing machine info.
+The following will triger the O-Benchmarker to look in your project for any files matching the `**/*.benchmark.ts` glob pettern, process their exported object and attempt to benchmark it. The preduced report will include the executing machine info.
 
 
 ## Create BenchmarkerTask 
