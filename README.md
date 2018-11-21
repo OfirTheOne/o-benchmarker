@@ -23,7 +23,7 @@ Generaly, the "benchmarker-task" file is exporting a specific object represent a
 ```sh
 o-benchmarker [file-name-pattern] [minfo-flag?]
 ```
-By executing that script the benchmarking process will be trigerd. <br><br>
+By executing that script the benchmarking process will be trigerd. <br>
 
 `o-benchmarker` script takes two arguments (as shown above) : <br>
 
@@ -48,7 +48,7 @@ Definde a [`BenchMethod`](#BenchMethod) to benchmark, a good practise will be to
 Once you define the method, move to define a [`BenchmarkerTask`](#BenchmarkerTask) object for that method.<br>
 Provide an `args` array, and an [`BenchmarkerOptions`](#BenchmarkerOptions) object with a short `taskName`, number of cycles you want the method to be benchmarked, and an optional `argsGen` function, if `argsGen` provided, the `args` array can just be `undifined`.<br>
 
-**Simple Example : ** <br>
+Example :
 ```ts
 import { BenchmarkerTask } from 'o-benchmarker';
 // assume we got a "randomArray" method that return us a random array of numbers.
@@ -68,6 +68,28 @@ const myBenchmarkerTask : BenchmarkerTask = {
 ```
  
 #### Create BenchmarkerMeasureGroup
+When you got all the tasks, you would like to grouped together, sort out, you can move to define the [`BenchmarkerMeasureGroup`](#BenchmarkerMeasureGroup) object. <br>
+A good practise will be to define the group on a saparete file (and to name that file according to the glob pattern you chose). 
+Simply difne the group object and export it for <br>
+
+Example : (continu the previos) 
+```ts
+import { forEachBenchmarkerTask } from './for-each';
+import { forBenchmarkerTask} from './for';
+
+import {BenchmarkerMeasureGroup} from '../../../lib'
+
+export const ForMeasureGroup: BenchmarkerMeasureGroup = {
+    groupDescription: 'For / ForEach method',
+    tasks: [
+        forEachBenchmarkerTask,
+        forBenchmarkerTask,
+    ]
+}
+
+```
+
+
 
 <br>
 
