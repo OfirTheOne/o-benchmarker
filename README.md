@@ -89,6 +89,12 @@ The following will triger the O-Benchmarker to look in your project for any file
 
 #### BenchmarkerMeasureGroup
 
+
+> Object that wrap an array of tasks, with additional configure properties.<br> 
+> This is the object expected to be export on each "beanchmark task" file (a file with a name matching the glob pattern provided to `o-benchmarker script`).<br>
+> If a different object will be exported the file will be ignored.
+
+
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
 | groupName | ➖ | string | short name for the group, displayed as a title in `BenchmarkerMeasureGroupReport` printout. |
