@@ -13,6 +13,7 @@ To first understand the general system interaction refer to any unfamiliar objec
 The *O-Benchmarker* tool process any "benchmarker-tasks" existing in your project, benchmark them and provide a "benchmarking-report" with information about the benchmarking performance (the report is printed to current procces terminal).<br>
 Generaly, the "benchmarker-task" file is exporting a specific object represent a tasks group to be measure agains each other (a group can contain one task as well), the "benchmarker-task" file name follows some pattern, used by the tool to detect the task file.
 
+<br>
 
 ## Usage
 
@@ -45,7 +46,7 @@ The following will triger the O-Benchmarker to look in your project for any file
 Definde a method to benchmark, a good practise will be to wrap the actual tragted method with a "caller" method, to better handle unexpected behavior (E.g catching error ..).<br>
 
 Once you define the method, move to define a [`BenchmarkerTask`](#BenchmarkerTask) object for that method.<br>
-Provide an `args` array, and an `options` object with on a `taskName`, number of cycles you want the method to be benchmarked, and an optional `argsGen` function, if `argsGen` provided `args` array can just be `undifined`.<br>
+Provide an `args` array, and an [`options` object](#BenchmarkerOptions) with a short `taskName`, number of cycles you want the method to be benchmarked, and an optional `argsGen` function, if `argsGen` provided, the `args` array can just be `undifined`.<br>
 
 **Simple Example : ** <br>
 ```ts
@@ -67,6 +68,8 @@ const myBenchmarkerTask : BenchmarkerTask = {
 ```
  
 #### Create BenchmarkerMeasureGroup
+
+<br>
 
 ## API reference 
 
@@ -124,6 +127,7 @@ const myBenchmarkerTask : BenchmarkerTask = {
 | tasks | ✔ | BenchmarkerTask[] | array of tasks to be beanchmarked and measured agains each other. |
 
 
+<br>
 
 ## Use Cases
 
