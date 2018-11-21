@@ -52,30 +52,30 @@ The following will triger the O-Benchmarker to look in your project for any file
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
-| method | ✔ | BenchMethod | the targeted method to benchmark |
-| args | ✔ | any[] | arguments provided to the method while benchmarking |
-| options | ✔ | BenchmarkerOptions | asfas |
+| method | ✔ | BenchMethod | the targeted method to benchmark. |
+| args | ✔ | any[] | arguments provided to the method while benchmarking. |
+| options | ✔ | BenchmarkerOptions | opitions for better configured task.  |
 
-
+<br>
 
 #### BenchmarkerOptions
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
-| taskName | ➖ | string | name to describe the task, if defined, it will be included in the `BenchmarkerReport` |
-| cycles | ✔ | number | the number of times the `BenchmarkerTask.method` will be called and benchmarked |
-| argsGen | ➖ | () => any | asfas |
+| taskName | ➖ | string | name to describe the task, if defined, it will be included in the `BenchmarkerReport`. |
+| cycles | ✔ | number | the number of times the `BenchmarkerTask.method` will be called and benchmarked. |
+| argsGen | ➖ | () => any | method that ganerate arguments for `BenchmarkerTask.method`, it's repeatedly called on each benchmarking cycle, if defined `BenchmarkerTask.args` will be ignored. |
 
-
+<br>
 
 #### BenchmarkerReport
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
-| durationAverge | ✔ | number | the duration avareage resulted from summing the duration of each benchmark cycle measurment and dividing it by `BenchmarkerOptions.cycles` |
-| cycles | ✔ | number | the number of times the `BenchmarkerTask.method` was called and benchmarked |
-| taskName | ➖ | string | if provided on `BenchmarkerOptions`, else `undefined` |
-| methodName | ✔ | string | `BenchmarkerTask.method.name` value |
+| durationAverge | ✔ | number | the duration avareage resulted from summing the duration of each benchmark cycle measurment and dividing it by `BenchmarkerOptions.cycles`. |
+| cycles | ✔ | number | the number of times the `BenchmarkerTask.method` was called and benchmarked. |
+| taskName | ➖ | string | if provided on `BenchmarkerOptions`, else `undefined`. |
+| methodName | ✔ | string | `BenchmarkerTask.method.name` value. |
 
 
 [glob pattern]: <https://en.wikipedia.org/wiki/Glob_(programming)>
