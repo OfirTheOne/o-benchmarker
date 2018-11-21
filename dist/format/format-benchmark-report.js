@@ -15,7 +15,7 @@ exports.formatMeasuredReports = formatMeasuredReports;
 function formatSingleReport(report, position) {
     return ('   *' + '\n' +
         `   * ${position} - ${colors.bold(colors.green(report.taskName))}` + '\n' +
-        `   *      ${colors.underline('Duration-Averge')} : ${report.durationAverge}` + '\n' +
+        `   *      ${colors.underline('Duration-Average')} : ${report.durationAverage}` + '\n' +
         `   *      ${colors.underline('Cycles')} : ${report.cycles}` + '\n' +
         `   *      ${colors.underline('Executed-Method')} : ${report.methodName}` + '\n' +
         '   *\n');
