@@ -43,17 +43,17 @@ The following will triger the O-Benchmarker to look in your project for any file
 
 
 #### Create BenchmarkerTask 
-Definde a method to benchmark, a good practise will be to wrap the actual tragted method with a "caller" method, to better handle unexpected behavior (E.g catching error ..).<br>
+Definde a [`BenchMethod`](#BenchMethod) to benchmark, a good practise will be to wrap the actual tragted method with a "caller" method, to better handle unexpected behavior (E.g catching error ..).<br>
 
 Once you define the method, move to define a [`BenchmarkerTask`](#BenchmarkerTask) object for that method.<br>
-Provide an `args` array, and an [`options` object](#BenchmarkerOptions) with a short `taskName`, number of cycles you want the method to be benchmarked, and an optional `argsGen` function, if `argsGen` provided, the `args` array can just be `undifined`.<br>
+Provide an `args` array, and an [`BenchmarkerOptions`](#BenchmarkerOptions) object with a short `taskName`, number of cycles you want the method to be benchmarked, and an optional `argsGen` function, if `argsGen` provided, the `args` array can just be `undifined`.<br>
 
 **Simple Example : ** <br>
 ```ts
 import { BenchmarkerTask } from 'o-benchmarker';
 // assume we got a "randomArray" method that return us a random array of numbers.
 
-function myMethodCaller(array: number[]) { 
+function myMethodCaller(array: number[]) {  // <- BenchMethod
     // call the targted method or just do something with the array.
 }
 const myBenchmarkerTask : BenchmarkerTask = {
