@@ -64,7 +64,15 @@ The following will triger the O-Benchmarker to look in your project for any file
 | ------ | ------ | ------ | ------ |
 | taskName | ➖ | string | name to describe the task, if defined, it will be included in the `BenchmarkerReport`. |
 | cycles | ✔ | number | the number of times the `BenchmarkerTask.method` will be called and benchmarked. |
-| argsGen | ➖ | () => any | method that ganerate arguments for `BenchmarkerTask.method`, it's repeatedly called on each benchmarking cycle, if defined `BenchmarkerTask.args` will be ignored. |
+| argsGen | ➖ | ()=>any | method that ganerate arguments for `BenchmarkerTask.method`, it's repeatedly called on each benchmarking cycle, if defined `BenchmarkerTask.args` will be ignored. |
+
+<br>
+
+#### BenchMethod
+
+```ts
+(...args: any[]) => any;
+```
 
 <br>
 
@@ -77,6 +85,24 @@ The following will triger the O-Benchmarker to look in your project for any file
 | taskName | ➖ | string | if provided on `BenchmarkerOptions`, else `undefined`. |
 | methodName | ✔ | string | `BenchmarkerTask.method.name` value. |
 
+<br>
+
+#### BenchmarkerMeasureGroup
+
+| property | required | type |description|
+| ------ | ------ | ------ | ------ |
+| groupName | ➖ | string | short name for the group, displayed as a title in `BenchmarkerMeasureGroupReport` printout. |
+| groupDescription | ✔ | string | short text to describe the tasks group. |
+| tasks | ✔ | BenchmarkerTask[] | array of tasks to be beanchmarked and measured agains each other. |
+
+
+
+
+
+
+
+
+
 
 [glob pattern]: <https://en.wikipedia.org/wiki/Glob_(programming)>
 
@@ -85,4 +111,5 @@ The following will triger the O-Benchmarker to look in your project for any file
 TODOS : 
 
 change BenchmarkerOptions to BenchmarkerTaskOptions
+add contaxt property to BenchmarkerTask
 ```
