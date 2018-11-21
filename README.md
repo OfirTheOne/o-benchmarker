@@ -125,6 +125,8 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 
 #### BenchmarkerTask
 
+> doc soon
+
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
 | method | ✔ | BenchMethod | the targeted method to benchmark. |
@@ -134,6 +136,8 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 <br>
 
 #### BenchmarkerOptions
+
+> doc soon
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
@@ -145,6 +149,8 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 
 #### BenchMethod
 
+> doc soon
+
 ```ts
 (...args: any[]) => any;
 ```
@@ -152,6 +158,8 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 <br>
 
 #### BenchmarkerReport
+
+> doc soon
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
@@ -164,11 +172,9 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 
 #### BenchmarkerMeasureGroup
 
-
 > Object that wrap an array of tasks, with additional configure properties.<br> 
 > This is the object expected to be export on each "beanchmark task" file (a file with a name matching the glob pattern provided to `o-benchmarker script`).<br>
 > If a different object will be exported the file will be ignored.
-
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
@@ -179,9 +185,30 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 <br>
 
 #### BenchmarkerMeasureGroupReport
+
+> doc soon
+
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
-| | | | |
+| groupName | ➖ | string | doc soon |
+| groupDescription | ✔ | string | doc soon |
+| tasksReports | ✔ | BenchmarkerReport[] | doc soon |
+| machineInfo | ✔ | MachineInfo | doc soon |
+
+<br>
+
+#### MachineInfo
+
+> doc soon
+
+| property | required | type |description|
+| ------ | ------ | ------ | ------ |
+| cpusModel | ✔ | string | doc soon |
+| numberOfCpus | ✔ | number | doc soon |
+| osPlatform | ✔ | string | doc soon |
+| osName | ✔ | string | doc soon |
+| osCpuArch | ✔ | string | doc soon |
+
 
 <br>
 
