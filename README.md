@@ -15,7 +15,8 @@ Generaly, the "benchmarker-task" file is exporting a specific object represent a
 
 
 ## Usage
-A little setup is needed : <br>
+
+#### Setup entrypoint script : <br>
 
 **O-Benchmarker** package is shipped with the following script :
 ```sh
@@ -40,10 +41,48 @@ Example :
 The following will triger the O-Benchmarker to look in your project for any files matching the `**/*.benchmark.ts` glob pettern, process their exported object and attempt to benchmark it. The preduced report will include the executing machine info.
 
 
-## Create BenchmarkerTask 
+#### Create BenchmarkerTask 
 
 
-## Create BenchmarkerMeasureGroup
+#### Create BenchmarkerMeasureGroup
+
+## API reference 
+
+#### BenchmarkerTask
+
+| property | required | type |description|
+| ------ | ------ | ------ | ------ |
+| method | ✔ | BenchMethod | the targeted method to benchmark |
+| args | ✔ | any[] | arguments provided to the method while benchmarking |
+| options | ✔ | BenchmarkerOptions | asfas |
+
+
+
+#### BenchmarkerOptions
+
+| property | required | type |description|
+| ------ | ------ | ------ | ------ |
+| taskName | ➖ | string | name to describe the task, if defined, it will be included in the `BenchmarkerReport` |
+| cycles | ✔ | number | the number of times the `BenchmarkerTask.method` will be called and benchmarked |
+| argsGen | ➖ | () => any | asfas |
+
+
+
+#### BenchmarkerReport
+
+| property | required | type |description|
+| ------ | ------ | ------ | ------ |
+| durationAverge | ✔ | number | the duration avareage resulted from summing the duration of each benchmark cycle measurment and dividing it by `BenchmarkerOptions.cycles` |
+| cycles | ✔ | number | the number of times the `BenchmarkerTask.method` was called and benchmarked |
+| taskName | ➖ | string | if provided on `BenchmarkerOptions`, else `undefined` |
+| methodName | ✔ | string | `BenchmarkerTask.method.name` value |
 
 
 [glob pattern]: <https://en.wikipedia.org/wiki/Glob_(programming)>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+```
+TODOS : 
+
+change BenchmarkerOptions to BenchmarkerTaskOptions
+```
