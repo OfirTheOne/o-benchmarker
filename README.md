@@ -10,7 +10,7 @@ npm i o-benchmarker -S
 
 ## Short Intro
 To first understand the general system interaction refer to any unfamiliar objects by there names (each one will be explained soon).<br>
-The **O-Benchmarker** tool process any "benchmarker-tasks" existing in your project, benchmark them and provide a "benchmarking-report" with information about the benchmarking performance (the report is printed to current procces terminal).<br>
+The *O-Benchmarker* tool process any "benchmarker-tasks" existing in your project, benchmark them and provide a "benchmarking-report" with information about the benchmarking performance (the report is printed to current procces terminal).<br>
 Generaly, the "benchmarker-task" file is exporting a specific object represent a tasks group to be measure agains each other (a group can contain one task as well), the "benchmarker-task" file name follows some pattern, used by the tool to detect the task file.
 
 
@@ -18,7 +18,7 @@ Generaly, the "benchmarker-task" file is exporting a specific object represent a
 
 #### Setup entrypoint script : <br>
 
-**O-Benchmarker** package is shipped with the following script :
+*O-Benchmarker* package is shipped with the following script :
 ```sh
 o-benchmarker [file-name-pattern] [minfo-flag?]
 ```
@@ -42,8 +42,27 @@ The following will triger the O-Benchmarker to look in your project for any file
 
 
 #### Create BenchmarkerTask 
+definde a method to benchmark, a good practise will be to wrap the actual tragted method with a "caller" method, to better handle unexpected beavore (E.g catching error ..).
+
+once you define the method, move to define a [BenchmarkerTask](#BenchmarkerTask) object 
+ 
+```ts
+function myMethodCaller(arg01: any, arg02: any ...) { 
+    // call the targted method or just do something 
+}
+const myBenchmarkerTask : BenchmarkerTask = {
+    method: myMethodCaller, 
+    args: undefined, 
+    options: { 
+        taskName: 'Native forEach',
+        cycles: CYCLES, 
+        argsGen: function () { return [randomArray()] } 
+    }
+};
+```
 
 
+ 
 #### Create BenchmarkerMeasureGroup
 
 ## API reference 
@@ -103,8 +122,17 @@ The following will triger the O-Benchmarker to look in your project for any file
 
 
 
+## Use Cases
+
+#### Conspiracy Enthusiast 
 
 
+
+#### Express fan boy
+
+
+
+#### Algorithm Inspector
 
 
 
