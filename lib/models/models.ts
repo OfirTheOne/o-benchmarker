@@ -6,7 +6,7 @@ export interface BenchmarkerTask {
 }
 
 export interface BenchmarkerReport {
-    durationAverge: number,
+    durationAverage: number,
     cycles: number,
     taskName: string,
     methodName: string,

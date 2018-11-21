@@ -44,15 +44,15 @@ export class Benchmarker {
             const report = this.exec(task.method, task.args, task.options);
             reports.push(report);
         }
-        reports.sort((a, b) => a.durationAverge - b.durationAverge);
+        reports.sort((a, b) => a.durationAverage - b.durationAverage);
         return { groupName, groupDescription, tasksReports: reports, machineInfo: this.machineInfo }
     }
 
     public exec(method: BenchMethod, args: any[], options: BenchmarkerOptions): BenchmarkerReport {
         const totalDuration = this.sample(method, args, options);
-        const durationAverge = totalDuration / options.cycles;
+        const durationAverage = totalDuration / options.cycles;
         const report: BenchmarkerReport = {
-            durationAverge,
+            durationAverage,
             cycles: options.cycles,
             taskName: options.taskName,
             methodName: method.name,
