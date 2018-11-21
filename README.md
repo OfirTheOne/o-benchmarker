@@ -212,28 +212,6 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 
 <br>
 
-## Use Cases
-
-#### Conspiracy Enthusiast 
-
-
-
-#### Express fan boy
-
-
-
-#### Algorithm Inspector
-
-
-
-
 
 [glob pattern]: <https://en.wikipedia.org/wiki/Glob_(programming)>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-```
-TODOS : 
-
-change BenchmarkerOptions to BenchmarkerTaskOptions
-add contaxt property to BenchmarkerTask
-```
