@@ -42,26 +42,29 @@ The following will triger the O-Benchmarker to look in your project for any file
 
 
 #### Create BenchmarkerTask 
-definde a method to benchmark, a good practise will be to wrap the actual tragted method with a "caller" method, to better handle unexpected beavore (E.g catching error ..).
+Definde a method to benchmark, a good practise will be to wrap the actual tragted method with a "caller" method, to better handle unexpected behavior (E.g catching error ..).<br>
 
-once you define the method, move to define a [BenchmarkerTask](#BenchmarkerTask) object 
- 
+Once you define the method, move to define a [`BenchmarkerTask`](#BenchmarkerTask) object for that method.<br>
+Provide an `args` array, and an `options` object with on a `taskName`, number of cycles you want the method to be benchmarked, and an optional `argsGen` function, if `argsGen` provided `args` array can just be `undifined`.<br>
+
+**Simple Example : ** <br>
 ```ts
-function myMethodCaller(arg01: any, arg02: any ...) { 
-    // call the targted method or just do something 
+import { BenchmarkerTask } from 'o-benchmarker';
+// assume we got a "randomArray" method that return us a random array of numbers.
+
+function myMethodCaller(array: number[]) { 
+    // call the targted method or just do something with the array.
 }
 const myBenchmarkerTask : BenchmarkerTask = {
     method: myMethodCaller, 
     args: undefined, 
     options: { 
-        taskName: 'Native forEach',
-        cycles: CYCLES, 
+        taskName: 'Some Calculation',
+        cycles: 10000, 
         argsGen: function () { return [randomArray()] } 
     }
 };
 ```
-
-
  
 #### Create BenchmarkerMeasureGroup
 
@@ -81,7 +84,7 @@ const myBenchmarkerTask : BenchmarkerTask = {
 
 | property | required | type |description|
 | ------ | ------ | ------ | ------ |
-| taskName | ➖ | string | name to describe the task, if defined, it will be included in the `BenchmarkerReport`. |
+| taskName | ✔ | string | name to describe the task, included in the `BenchmarkerReport`. |
 | cycles | ✔ | number | the number of times the `BenchmarkerTask.method` will be called and benchmarked. |
 | argsGen | ➖ | ()=>any | method that ganerate arguments for `BenchmarkerTask.method`, it's repeatedly called on each benchmarking cycle, if defined `BenchmarkerTask.args` will be ignored. |
 
