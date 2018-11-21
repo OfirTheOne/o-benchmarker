@@ -10,7 +10,7 @@ npm i o-benchmarker -S
 
 ## Short Intro
 To first understand the general system interaction refer to any unfamiliar objects by there names (each one will be explained soon).<br>
-The *O-Benchmarker* tool process any "benchmarker-tasks" existing in your project, benchmark them and provide a "benchmarking-report" with information about the benchmarking performance (the report is printed to current procces terminal).<br>
+The *O-Benchmarker* tool process any "benchmarker-tasks" existing in your project, benchmark them and provide a "benchmarking-report" with information about the benchmarking performance (the report is printed to current process terminal).<br>
 Generaly, the "benchmarker-task" file is exporting a specific object represent a tasks group to be measure agains each other (a group can contain one task as well), the "benchmarker-task" file name follows some pattern, used by the tool to detect the task file.
 
 <br>
@@ -27,7 +27,7 @@ By executing that script the benchmarking process will be trigerd. <br>
 
 `o-benchmarker` script takes two arguments (as shown above) : <br>
 
-* `file-name-pattern` - [required] is a [glob pattern] to detact for any files to be procces as tasks and benchmark.
+* `file-name-pattern` - [required] is a [glob pattern] to detact for any files to be process as tasks and benchmark.
 * `minfo-flag` - [optional] is flag with the literal name "minfo", if present the benchmarking report will include the executing machine info. 
 
 
@@ -56,7 +56,7 @@ import { BenchmarkerTask } from 'o-benchmarker';
 function myMethodCaller(array: number[]) {  // <- BenchMethod
     // call the targted method or just do something with the array.
 }
-const myBenchmarkerTask : BenchmarkerTask = {
+export const myBenchmarkerTask : BenchmarkerTask = {
     method: myMethodCaller, 
     args: undefined, 
     options: { 
@@ -72,23 +72,51 @@ When you got all the tasks, you would like to grouped together, sort out, you ca
 A good practise will be to define the group on a saparete file (and to name that file according to the glob pattern you chose). 
 Simply difne the group object and export it for <br>
 
-Example : (continu the previos) 
+Example : (continue the previous)
 ```ts
-import { forEachBenchmarkerTask } from './for-each';
-import { forBenchmarkerTask} from './for';
+import { myBenchmarkerTask } from './my-benchmarker-task';
+import { otherBenchmarkerTask } from './other-benchmarker-task'; // assume we got another benchmark task
 
-import {BenchmarkerMeasureGroup} from '../../../lib'
+import { BenchmarkerMeasureGroup } from 'o-benmarker'
 
-export const ForMeasureGroup: BenchmarkerMeasureGroup = {
-    groupDescription: 'For / ForEach method',
+export const myBenchmarkerMeasureGroup: BenchmarkerMeasureGroup = {
+    groupDescription: 'Example for tasks group benchmarking',
     tasks: [
-        forEachBenchmarkerTask,
-        forBenchmarkerTask,
+        myBenchmarkerTask,
+        otherBenchmarkerTask,
     ]
-}
-
+};
 ```
 
+From there, executing the `o-benchmarker` script will triger the benchmarking process.<br>
+The `myBenchmarkerMeasureGroup` object will be imported, process and benchmark.
+
+This will resulted with a `BenchmarkerMeasureGroupReport` object printed to the terminal : <br>
+```
+   * -- Example for tasks group benchmarking --
+   *
+   * 1 - Some Calculation
+   *      Duration-Averge : 0.019799838199999867
+   *      Cycles : 10000
+   *      Executed-Method : myMethodCaller
+   *
+   *
+   * 2 - Other Calculation
+   *      Duration-Averge : 0.045470597599990926
+   *      Cycles : 10000
+   *      Executed-Method : otherMethodCaller
+   *
+   *
+   * Intel(R) Core(TM) i5-7200U CPU @ 2.50GHz x4
+   * win32 x64 - Windows_NT
+   ***
+```
+
+*Notes* : <br>
+At the bottom of the report you can see the info of the executed machine (`minfo` flag was provided to `o-benchmarker` script).<br>
+The tasks displayed in a sorted order by "Duration-Averge" value.<br>
+If multypale "benchmarker-tasks" files are processed, the reports will be printed one after each the other.<br> 
+As soon as a tasks group finished being benchmarked the resulted report will be printed (meaning that the reports will not be printed all together).  
 
 
 <br>
@@ -148,6 +176,12 @@ export const ForMeasureGroup: BenchmarkerMeasureGroup = {
 | groupDescription | ✔ | string | short text to describe the tasks group. |
 | tasks | ✔ | BenchmarkerTask[] | array of tasks to be beanchmarked and measured agains each other. |
 
+<br>
+
+#### BenchmarkerMeasureGroupReport
+| property | required | type |description|
+| ------ | ------ | ------ | ------ |
+| | | | |
 
 <br>
 
