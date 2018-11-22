@@ -88,7 +88,7 @@ export const myBenchmarkerMeasureGroup: BenchmarkerMeasureGroup = {
 };
 ```
 
-From there, executing the `o-benchmarker` script will trigger the benchmarking process.<br>
+From there, executing the `o-benchmarker` script (E.g. `npm run benchmark`) will trigger the benchmarking process.<br>
 The `myBenchmarkerMeasureGroup` object will be imported, process and benchmark.
 
 This will result with a `BenchmarkerMeasureGroupReport` object printed to the terminal : <br>
