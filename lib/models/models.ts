@@ -1,37 +1,64 @@
 
-export interface BenchmarkerTask {
-    method: BenchMethod,
-    args: any[],
-    options: BenchmarkerOptions
+// #region - Benchmarker Task related
+import {MachineInfo} from './internal'
+export type BenchmarkerTask = { 
+    method: BenchmarkerMethod, 
+    args: any[], 
+    options: BenchmarkerTaskOptions 
+};
+
+
+export type BenchmarkerMethod 
+    = ((done:(err?: any, res?: any)=>void, ...args: any[]) => any)
+    | ((...args: any[]) => any);
+
+
+export interface BenchmarkerTaskOptions {
+    taskName: string, async? : boolean, cycles: number, argsGen?: () => any
 }
 
-export interface BenchmarkerReport {
-    durationAverage: number,
-    cycles: number,
-    taskName: string,
-    methodName: string,
+
+export interface BenchmarkerTaskReport {
+    durationAverage: number, cycles: number, taskName: string, methodName: string, async: boolean
 }
 
-export interface BenchmarkerMeasureGroup {
+
+// #endregion
+
+// #region - Benchmarker Tasks Group related
+
+export interface BenchmarkerTasksGroup {
     groupName?: string,
     groupDescription: string,
-    tasks: BenchmarkerTask[]
+    tasks: BenchmarkerTask[],
+    options? :BenchmarkerTasksGroupOptions,
 }
 
-export interface BenchmarkerMeasureGroupReport {
+export interface BenchmarkerTasksGroupReport {
     groupName: string,
     groupDescription: string,
-    tasksReports: BenchmarkerReport[], // sorted by duretion
+    tasksReports: BenchmarkerTaskReport[], // sorted by duration
     machineInfo: MachineInfo
 }
 
-export interface BenchmarkerFlags {
-    minfo: boolean
+export interface BenchmarkerTasksGroupOptions {
+    /**
+     * @description 
+     * If true feed the arguments provided to the first task, to all the tasks in the group.<br>
+     * The backlash of using it will cause the benchmarking to apply the number of cycles provided to the first task to the entire group 
+     * (ignore the other tasks cycles). 
+     * */
+    equalArgs?: boolean; 
 }
 
-// ---
 
-export type BenchMethod = (...args: any[]) => any;
+// #endregion
+
+
+// export interface BenchmarkerFlags {
+//     minfo: boolean;
+//     printas?: 'json' | 'default';
+// }
 
 export interface BenchTiming {
     start: number,
@@ -39,16 +66,12 @@ export interface BenchTiming {
     duration: number,
 }
 
-export interface BenchmarkerOptions {
-    taskName: string,
-    cycles: number, 
-    argsGen?: () => any
-}
 
-export interface MachineInfo {
-    cpusModel: string,
-    numberOfCpus: number,
-    osPlatform: string, 
-    osName: string, 
-    osCpuArch: string 
-};
+// export interface MachineInfo {
+//     cpusModel: string,
+//     numberOfCpus: number,
+//     osPlatform: string, 
+//     osName: string, 
+//     osCpuArch: string 
+// };
+

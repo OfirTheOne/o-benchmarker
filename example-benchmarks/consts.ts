@@ -1,1 +1,1 @@
-export const CYCLES = 10000;
+export const CYCLES = 1000;

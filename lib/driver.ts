@@ -1,17 +1,22 @@
-import { BenchmarkerFlags } from './models/models';
-import { Benchmarker } from './benchmarker';
-import { tasksGroupImportScanner } from "./tasks-scanner";
+import { BenchmarkerFlags, IBenchmarkerFlags } from './models/internal';
+import { Benchmarker } from './internal/benchmarker';
+import { CommandParser } from './internal/utils/command-parser';
 
+import { tasksGroupImportScanner } from "./internal/tasks-scanner";
+import { NoTasksDetectedError, MissingFileNamePatternError } from './internal/sys-error'
+
+const parser = new CommandParser(); 
 const relevantArgs = process.argv.splice(2);
+parser.parseCommand(relevantArgs);
 
 const suffix = relevantArgs[0];
 if(!suffix) {
-    throw new Error('O-Benchmarker Error: first argumanet must contain a file name pattern.');
+    throw new MissingFileNamePatternError();
 }
 
-const _mInfo_flag = ~(relevantArgs.indexOf('minfo', 1));
-const flags: BenchmarkerFlags = {
-    minfo: !!_mInfo_flag
+const flags: IBenchmarkerFlags = {
+    minfo: parser.hasFlag('--minfo'),
+    printas: parser.hasFlag('--json') ? 'json' : 'default'
 };
 
 tasksGroupImportScanner(suffix)
@@ -19,7 +24,8 @@ tasksGroupImportScanner(suffix)
         if (tasksGroups.length > 0) {
             (new Benchmarker(flags).echo(tasksGroups));
         } else {
-            throw new Error('O-Benchmarker Error: No benchmarker tasks was found.')
+            // no benchmarker tasks was found.
+            throw new NoTasksDetectedError(); 
         }
     })
     .catch((err) => {

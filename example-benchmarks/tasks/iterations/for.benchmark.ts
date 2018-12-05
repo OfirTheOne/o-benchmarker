@@ -1,10 +1,13 @@
 import { forEachBenchmarkerTask } from './for-each';
 import { forBenchmarkerTask} from './for';
 
-import {BenchmarkerMeasureGroup} from '../../../lib'
+import {BenchmarkerTasksGroup} from '../../../lib'
 
-export const ForMeasureGroup: BenchmarkerMeasureGroup = {
+export const ForTasksGroup: BenchmarkerTasksGroup = {
     groupDescription: 'For / ForEach method',
+    options: {
+        equalArgs: false
+    },
     tasks: [
         forEachBenchmarkerTask,
         forBenchmarkerTask,

@@ -5,10 +5,11 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "test": "SET NODE_ENV=test&& mocha --require ts-node/register tests/**/*.test.ts",
     "build": "tsc",
     "start": "ts-node ./src/index.ts",
-    "benchmark:dev": "node ./lib/driver-exec.dev.js **/*.benchmark.ts minfo",
-    "benchmark:prod": "o-benchmarker **/*.benchmark.ts minfo"
+    "benchmark:dev": "node ./lib/driver-exec.dev.js **/*.benchmark.ts --minfo",
+    "benchmark:prod": "o-benchmarker **/*.benchmark.ts --minfo"
   },
   "bin": {
     "o-benchmarker": "./dist/driver-exec.js"
@@ -28,7 +29,10 @@
     "@types/chai": "^4.1.7",
     "@types/glob": "^7.1.1",
     "@types/mocha": "^5.2.5",
+    "@types/shelljs": "^0.8.0",
+    "@types/sinon": "^5.0.7",
     "chai": "^4.2.0",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "sinon": "^7.1.1"
   }
 }
