@@ -6,14 +6,14 @@ If you think of multiple ways to implement a specific action, or you found a cop
 
 ### Table Of Contents 
 + [Installation](#Installation)
-+ [Short Intro](#Short%20Intro)
++ [Short Intro](#Short-Intro)
 + [Usage](#Usage)
-    + [Setup entrypoint script](#Setup%20entrypoint%20script)
-    + [Create BenchmarkerTask ](#Create%20BenchmarkerTask )
-    + [Create BenchmarkerTasksGroup](#Create%20BenchmarkerTasksGroup)
-+ [Inside The O-Benchmarker Flow](#Inside%20The%20O-Benchmarker%20Flow)
-+ [API Reference](#API%20Reference)
-+ [Example Use Cases](#Example%20Use%20Cases)
+    + [Setup entrypoint script](#Setup-entrypoint-script)
+    + [Create BenchmarkerTask ](#Create-BenchmarkerTask )
+    + [Create BenchmarkerTasksGroup](#Create-BenchmarkerTasksGroup)
++ [Inside The O-Benchmarker Flow](#Inside-The-O-Benchmarker-Flow)
++ [API Reference](#API-Reference)
++ [Example Use Cases](#Example-Use-Cases)
 
 <br><hr>
 
@@ -144,12 +144,12 @@ As soon as a tasks group finished being benchmarked the resulted report will be 
 ## API Reference 
 
 ### API Reference Table Of Contents 
-+ [O-Benchmarker - EntryPoint Command](#O-Benchmarker%20-%20EntryPoint%20Command)
++ [O-Benchmarker - EntryPoint Command](#O-Benchmarker---EntryPoint-Command)
 + [BenchmarkerTask](#BenchmarkerTask)
     + [BenchmarkerOptions](#BenchmarkerOptions)
     + [BenchmarkerMethod](#BenchmarkerMethod)
-        + [Async Method](#&raquo;%20Async%20Method)
-        + [Sync Method](#&raquo;%20Sync%20Method)
+        + [Async Method](#&raquo;-Async-Method)
+        + [Sync Method](#&raquo;-Sync-Method)
 + [BenchmarkerTaskReport](#BenchmarkerTaskReport)
 + [BenchmarkerTasksGroup](#BenchmarkerTasksGroup)
     + [BenchmarkerTasksGroupOptions](#BenchmarkerTasksGroupOptions)
