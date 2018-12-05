@@ -13,6 +13,7 @@ If you think of multiple ways to implement a specific action, or you found a cop
     + [Create BenchmarkerTasksGroup](#Create%20BenchmarkerTasksGroup)
 + [Inside The O-Benchmarker Flow](#Inside%20The%20O-Benchmarker%20Flow)
 + [API Reference](#API%20Reference)
++ [Example Use Cases](#Example%20Use%20Cases)
 
 <br><hr>
 
@@ -100,8 +101,13 @@ export const myBenchmarkerTasksGroup: BenchmarkerTasksGroup = {
 };
 ```
 
+<<<<<<< HEAD
 From there, executing the `o-benchmarker` script will trigger the benchmarking process.<br>
 The `myBenchmarkerTasksGroup` object will be imported, process and benchmark.
+=======
+From there, executing the `o-benchmarker` script (E.g. `npm run benchmark`) will trigger the benchmarking process.<br>
+The `myBenchmarkerMeasureGroup` object will be imported, process and benchmark.
+>>>>>>> 24c178f01c79e31185f5cb1a6ffd4597aba85090
 
 This will result with a `BenchmarkerTasksGroupReport` object printed to the terminal : <br>
 ```
