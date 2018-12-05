@@ -1,7 +1,7 @@
 import { EventEmitter } from 'events';
 import * as os from 'os';
 import { BenchmarkerTaskReport, BenchmarkerTasksGroupReport, BenchmarkerTasksGroup } from './../../../../models';
-import { IBenchmarkEngine, GROUP_SUCCESS, GROUP_ERROR } from './../../models';
+import { IBenchmarkEngine, GROUP_SUCCESS, GROUP_ERROR } from './../../models/i-benchmark-engine';
 import { MachineInfo } from '../../../../models/internal';
 
 const EVENTS_NAMES = {

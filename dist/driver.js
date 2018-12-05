@@ -1,15 +1,19 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const benchmarker_1 = require("./benchmarker");
-const tasks_scanner_1 = require("./tasks-scanner");
+const benchmarker_1 = require("./internal/benchmarker");
+const command_parser_1 = require("./internal/utils/command-parser");
+const tasks_scanner_1 = require("./internal/tasks-scanner");
+const sys_error_1 = require("./internal/sys-error");
+const parser = new command_parser_1.CommandParser();
 const relevantArgs = process.argv.splice(2);
+parser.parseCommand(relevantArgs);
 const suffix = relevantArgs[0];
 if (!suffix) {
-    throw new Error('O-Benchmarker Error: first argumanet must contain a file name pattern.');
+    throw new sys_error_1.MissingFileNamePatternError();
 }
-const _mInfo_flag = ~(relevantArgs.indexOf('minfo', 1));
 const flags = {
-    minfo: !!_mInfo_flag
+    minfo: parser.hasFlag('--minfo'),
+    printas: parser.hasFlag('--json') ? 'json' : 'default'
 };
 tasks_scanner_1.tasksGroupImportScanner(suffix)
     .then((tasksGroups) => {
@@ -17,7 +21,8 @@ tasks_scanner_1.tasksGroupImportScanner(suffix)
         (new benchmarker_1.Benchmarker(flags).echo(tasksGroups));
     }
     else {
-        throw new Error('O-Benchmarker Error: No benchmarker tasks was found.');
+        // no benchmarker tasks was found.
+        throw new sys_error_1.NoTasksDetectedError();
     }
 })
     .catch((err) => {

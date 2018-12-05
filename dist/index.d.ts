@@ -1,2 +1,1 @@
-export * from './benchmarker';
-export { BenchmarkerTask, BenchmarkerReport, BenchmarkerMeasureGroup, BenchmarkerMeasureGroupReport, } from './models/models';
+export { BenchmarkerTask, BenchmarkerTaskOptions, BenchmarkerTaskReport, BenchmarkerTasksGroup, BenchmarkerTasksGroupOptions, BenchmarkerTasksGroupReport, } from './models/models';
