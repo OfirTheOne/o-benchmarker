@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "./test/run-test.js",
+    "test": "node ./tests/run-test.js",
     "build": "tsc",
     "start": "ts-node ./src/index.ts",
     "benchmark:dev": "node ./lib/driver-exec.dev.js **/*.benchmark.ts --minfo",

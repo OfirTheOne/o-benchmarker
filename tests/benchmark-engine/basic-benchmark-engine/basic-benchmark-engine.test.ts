@@ -5,8 +5,6 @@ import { BasicBenchmarkEngine } from './../../../lib/internal/benchmarker/engine
 import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../../lib';
 import { randomArray } from './../../helpers';
 
-console.log(process.env.NODE_ENV)
-
 // ******************** tasks setup ************************* //
 function findMaxFancy(array: number[]) { 
     if(!array) return;

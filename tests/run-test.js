@@ -9,7 +9,7 @@ const mochaScript = 'mocha --require ts-node/register tests/**/*.test.ts';
 const testWin = `SET NODE_ENV=test&& ${mochaScript}`;
 const testLinOrMac = `NODE_ENV=test&& ${mochaScript}`;
 
-const currentOs = os.type();
+const currentOs = os.platform();
 let testScript = '';
 
 switch (currentOs) {
@@ -25,8 +25,8 @@ switch (currentOs) {
         break;
 }
 
-
-if(shell.exec(testScript).code != 0) {
+const statusCode = shell.exec(testScript).code;
+if(statusCode != 0) {
     shell.echo('exec test script failed');
     shell.exit(1);
 }
