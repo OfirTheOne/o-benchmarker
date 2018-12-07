@@ -1,6 +1,6 @@
 import { expect } from 'chai';
 import { stub,  spy, SinonSpy, SinonStub } from 'sinon';
-import { SampleTimer } from './../../../lib/internal/benchmarker/engine/promise-base-benchmark-engine/sample-timer';
+import { SampleTimer } from './../../lib/internal/benchmarker/engine/promise-base-benchmark-engine/sample-timer';
 import { CryptoPlayGroup } from '../tasks-group/crypto-play'
 
 describe('SampleTimer - async task & equalArgs', function () {

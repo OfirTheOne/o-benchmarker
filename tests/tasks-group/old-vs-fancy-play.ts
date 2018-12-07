@@ -1,5 +1,5 @@
-import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../../lib';
-import { randomArray } from './../../helpers';
+import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../lib';
+import { randomArray } from './../helpers';
 
 // ******************** tasks setup ************************* //
 function findMaxFancy(array: number[]) { 

@@ -1,57 +1,11 @@
 import { expect } from 'chai';
 import { spy, SinonSpy } from 'sinon';
 
-import { BasicBenchmarkEngine } from './../../../lib/internal/benchmarker/engine';
-import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../../lib';
-import { randomArray } from './../../helpers';
+import { PromiseBaseBenchmarkEngine } from './../../lib/internal/benchmarker/engine';
+import { FindMaxGroup } from './../tasks-group/old-vs-fancy-play'
 
-// ******************** tasks setup ************************* //
-function findMaxFancy(array: number[]) { 
-    if(!array) return;
-    const max = Math.max(...array);
-    return max;
-}
-function findMaxOldSchool(array: number[]) { 
-    if(!array) return;
-    let max = Number.MIN_SAFE_INTEGER; 
-    for (let i = 0; i < array.length; i++) { 
-        if(array[i] > max) {
-            max = array[i];
-        }
-    }
-    return max; 
-}
-const FindMaxOldSchoolBenchmarkerTask : BenchmarkerTask = {
-    method: findMaxOldSchool, 
-    args: undefined, 
-    options: { 
-        taskName: 'OldSchool style find max',
-        cycles: 100, 
-        argsGen: function () { return [randomArray(100)] } 
-    }
-};
-const FindMaxFancyBenchmarkerTask: BenchmarkerTask = {
-    method: findMaxFancy, 
-    args: undefined,
-    options:  { 
-        taskName: 'Fancy style find max',
-        cycles: 100, 
-        argsGen: function () { return [randomArray(100)] } 
-    }
-};
-const FindMaxGroup: BenchmarkerTasksGroup = {
-    groupDescription: 'Which FindMax is faster ??',
-    options: {
-        equalArgs: true
-    },
-    tasks: [
-        FindMaxOldSchoolBenchmarkerTask,
-        FindMaxFancyBenchmarkerTask,
-    ]
-}
-
-describe('BasicBenchmarkEngine top-level functionalities, direct calling.', function() {
-    const benchmarkerEngine = new BasicBenchmarkEngine();
+describe('PromiseBaseBenchmarkEngine - direct calling - sync task & equalArgs.', function() {
+    const benchmarkerEngine = new PromiseBaseBenchmarkEngine();
 
     this.afterEach(() => {
         // after each 'it()' test clean all listeners.
@@ -107,9 +61,8 @@ describe('BasicBenchmarkEngine top-level functionalities, direct calling.', func
 
         // #endregion
             done();
-        });       
+        });  
         benchmarkerEngine.on('benchmarking-group-error', (err) =>{ done(err) });    
-
         benchmarkerEngine.measureGroup(FindMaxGroup);
     })
 
@@ -128,7 +81,7 @@ describe('BasicBenchmarkEngine top-level functionalities, direct calling.', func
                 if(groupReport.tasksReports.length > 0) {
                     const firstTaskCycles = groupReport.tasksReports[0].cycles;
                     // all the cb methods should be called as the number of first task cycles value. 
-                    spies.forEach((spy, i) => expect(spy.callCount).is.equal(firstTaskCycles));
+                    spies.forEach((spy, i) =>  expect(spy.callCount).is.equal(firstTaskCycles));
                     // all the cb methods should receive the same arguments on same cycle.
                     for(let cycle = 0; cycle < firstTaskCycles; cycle++) {
                         const firstTaskArgsOnCurrentCycle = spies[0].args[cycle];
@@ -140,11 +93,11 @@ describe('BasicBenchmarkEngine top-level functionalities, direct calling.', func
                     }
                 }
             } 
-            else if(!FindMaxGroup.options || !FindMaxGroup.options.equalArgs) {
+            else if(!FindMaxGroup.options || !(FindMaxGroup.options.equalArgs)) {
                 if(groupReport.tasksReports.length > 0) {
-                    spies.forEach((spy, i) => 
+                    spies.forEach((spy, i) => {
                         expect(spy.callCount).is.equal(FindMaxGroup.tasks[i].options.cycles)
-                    );
+                    });
                 }
             }
             spies.forEach((spy, i) => spy.restore());
@@ -155,6 +108,4 @@ describe('BasicBenchmarkEngine top-level functionalities, direct calling.', func
         benchmarkerEngine.measureGroup(FindMaxGroup);
     });
 })
-
-
 
