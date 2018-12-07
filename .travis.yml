@@ -4,6 +4,10 @@ node_js :
 install:
  - npm install
 script:
-  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; npm test:linux; fi
-  - elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; npm test:osx; fi
-  - elif [[ "$TRAVIS_OS_NAME" == "win" ]]; npm test:win; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then 
+      npm test:linux; 
+  - elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then 
+      npm test:osx; 
+  - elif [[ "$TRAVIS_OS_NAME" == "win" ]]; then 
+      npm test:win; 
+    fi
