@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { performance } from 'perf_hooks';
+import { PerformanceObserver, performance } from 'perf_hooks';
 import * as crypto from 'crypto';
 import { PromiseLand, SyncCallback, AsyncCallback } from './../../../utils/promise-land';
 import { RoundCallError } from '../../../sys-error/index';
@@ -41,11 +41,16 @@ class Timer {
     private async asyncRoundCall(cb: AsyncCallback, args: any[], sampleId: (string | number)): Promise<TimerReport> {
         try {
             const promisedCallback = PromiseLand.promisifyCallback(cb, args);
-            performance.mark(`start:${this._id}-${sampleId}`);
+            const startTime = performance.now(); //performance.mark(`start:${this._id}-${sampleId}`);
             await promisedCallback;
-            performance.mark(`end:${this._id}-${sampleId}`);
+            const endTime  = performance.now();// performance.mark(`end:${this._id}-${sampleId}`);
 
-            const timerReport = this.pollMeasureCreateReport(cb.name, sampleId)
+            const timerReport: TimerReport = { 
+                start: startTime, 
+                duration: (endTime - startTime), 
+                sampleMethodName: cb.name
+            };
+            // const timerReport = this.pollMeasureCreateReport(cb.name, sampleId)
             this.lockdown = false;
             return timerReport;
         } catch (error) {
@@ -56,13 +61,19 @@ class Timer {
 
     private syncRoundCall(cb: SyncCallback, args: any[], sampleId: (string | number)): TimerReport {
         try {
-            performance.mark(`start:${this._id}-${sampleId}`);
+            // performance.mark(`start:${this._id}-${sampleId}`);
+            const startTime = performance.now();
             cb(...args);
-            performance.mark(`end:${this._id}-${sampleId}`);
+            const endTime  = performance.now(); // = performance.mark(`end:${this._id}-${sampleId}`);
 
-            const sampleReport = this.pollMeasureCreateReport(cb.name, sampleId);
+            const timerReport: TimerReport = { 
+                start: startTime, 
+                duration: (endTime - startTime), 
+                sampleMethodName: cb.name
+            };
+            // const sampleReport = this.pollMeasureCreateReport(cb.name, sampleId);
             this.lockdown = false;
-            return sampleReport;
+            return timerReport;
         } catch (error) {
             this.lockdown = false;
             throw new RoundCallError(error, cb, args, sampleId, false);
@@ -71,21 +82,21 @@ class Timer {
     }
 
 
-    private pollMeasureCreateReport(methodName: string, sampleId: string | number): TimerReport {
-        performance.measure(
-            `measure:${this._id}-${sampleId}`,
-            `start:${this._id}-${sampleId}`,
-            `end:${this._id}-${sampleId}`
-        );
-        const currentEntry = performance.getEntriesByName(`measure:${this._id}-${sampleId}`, 'measure')[0];
-        performance.clearMeasures(); performance.clearMarks();
-        const sampleReport: TimerReport = { 
-            start: currentEntry.startTime, 
-            duration: currentEntry.duration, 
-            sampleMethodName: methodName
-        };
-        return sampleReport;
-    }
+    // private pollMeasureCreateReport(methodName: string, sampleId: string | number): TimerReport {
+    //     performance.measure(
+    //         `measure:${this._id}-${sampleId}`,
+    //         `start:${this._id}-${sampleId}`,
+    //         `end:${this._id}-${sampleId}`
+    //     );
+    //     const currentEntry = performance.getEntriesByName(`measure:${this._id}-${sampleId}`, 'measure')[0];
+    //     performance.clearMeasures(); performance.clearMarks();
+    //     const sampleReport: TimerReport = { 
+    //         start: currentEntry.startTime, 
+    //         duration: currentEntry.duration, 
+    //         sampleMethodName: methodName
+    //     };
+    //     return sampleReport;
+    // }
 }
 
 
