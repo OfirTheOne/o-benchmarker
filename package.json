@@ -5,7 +5,12 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "test": "node ./tests/run-test.js",
+    "mocha-test": "mocha --require ts-node/register tests/**/*.test.ts",
+    "test:win": "SET NODE_ENV=test&& npm run mocha-test",
+    "test:lin": "NODE_ENV=test&& npm run mocha-test",
+    "test:osx": "NODE_ENV=test&& npm run mocha-test",
+    "test": "npm run test:win",
+
     "build": "tsc",
     "start": "ts-node ./src/index.ts",
     "benchmark:dev": "node ./lib/driver-exec.dev.js **/*.benchmark.ts --minfo",
