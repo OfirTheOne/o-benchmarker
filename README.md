@@ -1,4 +1,8 @@
 # O-Benchmarker
+
+[![Build Status](https://travis-ci.org/OfirTheOne/o-benchmarker.svg?branch=master)](https://travis-ci.org/OfirTheOne/o-benchmarker)
+![npm](https://img.shields.io/npm/v/o-benchmarker.svg)
+
 O-Benchmarker - Node.js Benchmarking Framework. <br>
 To easily, and without excessive code writhing, profile the performance of any function.
 If you think of multiple ways to implement a specific action, or you found a copal of modules that preform what you're looking for, and want to evaluate which one is faster, this module provide you with a simple, easy-to-use API just for that (aiming to be as easy as testing with Mocha).
