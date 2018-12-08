@@ -1,3 +1,4 @@
+import {performance} from 'perf_hooks'; 
 
 type ResolveCallback = (value?: any | PromiseLike<any>) => void;
 type RejectCallback = (reason?: any) => void;
@@ -5,6 +6,8 @@ type DoneFn = (err?: any, args?: any) => void;
 export type AsyncCallback = (done: DoneFn, ...args: any[]) => any;
 export type SyncCallback = (...args: any[]) => any;
 type FreeCallback = AsyncCallback | SyncCallback;
+
+interface Timerify {start: number, end: number, duration: number, resolvedWith: any}
 
 /**
  * @description
@@ -29,7 +32,6 @@ export class PromiseLand {
             }
         }
     }
-
     public static promisifyCallback(cb: AsyncCallback, args: any[]): Promise<any>
     public static promisifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<any>
     public static promisifyCallback(cb: FreeCallback, args: any[], cbAsync: boolean = true): Promise<any> {
@@ -47,4 +49,42 @@ export class PromiseLand {
             }
         }));
     }
+
+
+
+    private static createTimerDoneFn(resolve: ResolveCallback, reject: RejectCallback): DoneFn {
+        let canRun = true;
+        const start = performance.now();
+        return function (err, args) {
+            if (canRun) {
+                canRun = false;
+                const end = performance.now();
+                if(err != undefined) {
+                    reject(err)
+                } else {
+                    resolve({start, end, duration: (end-start), resolvedWith: args});
+                }
+            }
+        }
+    }
+    public static timerifyCallback(cb: AsyncCallback, args: any[]): Promise<Timerify>
+    public static timerifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<Timerify>
+    public static timerifyCallback(cb: FreeCallback, args: any[], cbAsync: boolean = true): Promise<Timerify> {
+        return (new Promise<Timerify>(function (resolve, reject) {
+            try {
+                if(cbAsync) {
+                    const done = PromiseLand.createTimerDoneFn(resolve, reject);
+                    (cb as AsyncCallback)(done, ...args);
+                } else {
+                    const start = performance.now();
+                    const result = (cb as SyncCallback)(...args);
+                    const end = performance.now();
+                    resolve({start, end, duration: (end-start), resolvedWith: result});
+                }
+            } catch (error) {
+                reject(error);
+            }
+        }));
+    }
 }
+

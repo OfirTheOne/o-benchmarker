@@ -101,15 +101,9 @@ export class BasicBenchmarkEngine extends AbstractBenchmarkEngine {
         return totalDurationArray;
     }
     private cycleMark(cb: BenchmarkerMethod, args: any[], cycle: number): BenchTiming {
-        performance.mark(`start:${cycle}`);
         const startTime = performance.now();
         (cb as Function)(...args);
-        const endTime  = performance.now(); // = performance.mark(`end:${this._id}-${sampleId}`);
-
-        // performance.mark(`end:${cycle}`);
-        // performance.measure(`measure:${cycle}`, `start:${cycle}`, `end:${cycle}`);
-        // const currentEntry = performance.getEntriesByName(`measure:${cycle}`, 'measure')[0];
-        // performance.clearMeasures(); performance.clearMarks();
+        const endTime  = performance.now();
         return { start: startTime, duration: (endTime-startTime) };
     }
     // #endregion
