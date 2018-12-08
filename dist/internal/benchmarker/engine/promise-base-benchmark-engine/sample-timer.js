@@ -10,13 +10,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 const perf_hooks_1 = require("perf_hooks");
-const crypto = require("crypto");
+const common_untitled_1 = require("./../../../utils/common-untitled");
 const promise_land_1 = require("./../../../utils/promise-land");
-const index_1 = require("../../../sys-error/index");
+const sys_error_1 = require("../../../sys-error");
 class Timer {
     constructor() {
         this.lockdown = false;
-        this._id = Object.freeze(crypto.randomBytes(16).toString("hex"));
+        this._id = common_untitled_1.generateId();
     }
     singleSample(cb, args, sampleId, async = false) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -38,45 +38,41 @@ class Timer {
         return __awaiter(this, void 0, void 0, function* () {
             try {
                 const promisedCallback = promise_land_1.PromiseLand.promisifyCallback(cb, args);
-                perf_hooks_1.performance.mark(`start:${this._id}-${sampleId}`);
+                const startTime = perf_hooks_1.performance.now();
                 yield promisedCallback;
-                perf_hooks_1.performance.mark(`end:${this._id}-${sampleId}`);
-                const timerReport = this.pollMeasureCreateReport(cb.name, sampleId);
+                const endTime = perf_hooks_1.performance.now();
+                const timerReport = {
+                    start: startTime,
+                    duration: (endTime - startTime),
+                    sampleMethodName: cb.name
+                };
                 this.lockdown = false;
                 return timerReport;
             }
             catch (error) {
                 this.lockdown = false;
-                throw new index_1.RoundCallError(error, cb, args, sampleId, true); //{ error, method: cb, args, sampleId, async: true } as TimerError;
+                throw new sys_error_1.RoundCallError(error, cb, args, sampleId, true); //{ error, method: cb, args, sampleId, async: true } as TimerError;
             }
         });
     }
     syncRoundCall(cb, args, sampleId) {
         try {
-            perf_hooks_1.performance.mark(`start:${this._id}-${sampleId}`);
+            const startTime = perf_hooks_1.performance.now();
             cb(...args);
-            perf_hooks_1.performance.mark(`end:${this._id}-${sampleId}`);
-            const sampleReport = this.pollMeasureCreateReport(cb.name, sampleId);
+            const endTime = perf_hooks_1.performance.now();
+            const timerReport = {
+                start: startTime,
+                duration: (endTime - startTime),
+                sampleMethodName: cb.name
+            };
             this.lockdown = false;
-            return sampleReport;
+            return timerReport;
         }
         catch (error) {
             this.lockdown = false;
-            throw new index_1.RoundCallError(error, cb, args, sampleId, false);
+            throw new sys_error_1.RoundCallError(error, cb, args, sampleId, false);
             // throw { error, method: cb, args, sampleId, async: false } as TimerError;
         }
-    }
-    pollMeasureCreateReport(methodName, sampleId) {
-        perf_hooks_1.performance.measure(`measure:${this._id}-${sampleId}`, `start:${this._id}-${sampleId}`, `end:${this._id}-${sampleId}`);
-        const currentEntry = perf_hooks_1.performance.getEntriesByName(`measure:${this._id}-${sampleId}`, 'measure')[0];
-        perf_hooks_1.performance.clearMeasures();
-        perf_hooks_1.performance.clearMarks();
-        const sampleReport = {
-            start: currentEntry.startTime,
-            duration: currentEntry.duration,
-            sampleMethodName: methodName
-        };
-        return sampleReport;
     }
 }
 class SampleTimer {

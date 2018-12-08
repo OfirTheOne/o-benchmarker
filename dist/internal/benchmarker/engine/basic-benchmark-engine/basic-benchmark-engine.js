@@ -87,14 +87,10 @@ class BasicBenchmarkEngine extends abstract_benchmark_engine_1.AbstractBenchmark
         return totalDurationArray;
     }
     cycleMark(cb, args, cycle) {
-        perf_hooks_1.performance.mark(`start:${cycle}`);
+        const startTime = perf_hooks_1.performance.now();
         cb(...args);
-        perf_hooks_1.performance.mark(`end:${cycle}`);
-        perf_hooks_1.performance.measure(`measure:${cycle}`, `start:${cycle}`, `end:${cycle}`);
-        const currentEntry = perf_hooks_1.performance.getEntriesByName(`measure:${cycle}`, 'measure')[0];
-        perf_hooks_1.performance.clearMeasures();
-        perf_hooks_1.performance.clearMarks();
-        return { start: currentEntry.startTime, duration: currentEntry.duration };
+        const endTime = perf_hooks_1.performance.now();
+        return { start: startTime, duration: (endTime - startTime) };
     }
 }
 exports.BasicBenchmarkEngine = BasicBenchmarkEngine;

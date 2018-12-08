@@ -1,5 +1,5 @@
 import { SyncCallback, AsyncCallback } from './../../../utils/promise-land';
-import { RoundCallError } from '../../../sys-error/index';
+import { RoundCallError } from '../../../sys-error';
 interface TimerReport {
     start: number;
     duration: number;

@@ -1,6 +1,12 @@
 declare type DoneFn = (err?: any, args?: any) => void;
 export declare type AsyncCallback = (done: DoneFn, ...args: any[]) => any;
 export declare type SyncCallback = (...args: any[]) => any;
+interface Timerify {
+    start: number;
+    end: number;
+    duration: number;
+    resolvedWith: any;
+}
 /**
  * @description
  *  This class serve one purpose, to covert an async or sync function to a promise. <br>
@@ -13,5 +19,8 @@ export declare class PromiseLand {
     private static createDoneFn;
     static promisifyCallback(cb: AsyncCallback, args: any[]): Promise<any>;
     static promisifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<any>;
+    private static createTimerDoneFn;
+    static timerifyCallback(cb: AsyncCallback, args: any[]): Promise<Timerify>;
+    static timerifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<Timerify>;
 }
 export {};
