@@ -12,7 +12,7 @@ export async function tasksGroupImportScanner(suffixGlobPattern: string): Promis
             for (const key in (_module.exportObject)) {
                 if (_module.exportObject.hasOwnProperty(key)) {
                     const exportField = _module.exportObject[key];
-                    if(ModelParser.isBenchmarkerTasksGroup(exportField)) {
+                    if(ModelParser.benchmarkerTasksGroupValidator(exportField)) {
                         tasksGroups.push(exportField);
                     } 
                 }

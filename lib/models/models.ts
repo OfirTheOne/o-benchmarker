@@ -1,6 +1,7 @@
+import {MachineInfo} from './internal'
 
 // #region - Benchmarker Task related
-import {MachineInfo} from './internal'
+
 export type BenchmarkerTask = { 
     method: BenchmarkerMethod, 
     args: any[], 
@@ -14,12 +15,20 @@ export type BenchmarkerMethod
 
 
 export interface BenchmarkerTaskOptions {
-    taskName: string, async? : boolean, cycles: number, argsGen?: () => any
+    taskName: string, 
+    async? : boolean, 
+    cycles: number, 
+    ignore?: boolean
+    argsGen?: () => any
 }
 
 
 export interface BenchmarkerTaskReport {
-    durationAverage: number, cycles: number, taskName: string, methodName: string, async: boolean
+    durationAverage: number, 
+    cycles: number, 
+    taskName: string, 
+    methodName: string, 
+    async: boolean
 }
 
 

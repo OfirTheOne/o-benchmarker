@@ -13,8 +13,9 @@ describe('PromiseBaseBenchmarkEngine - direct calling - sync task & equalArgs.',
     });
 
     it('Returned group-report should be structured as expected.', function(done){
+        // this.skip();
         benchmarkerEngine.on('benchmarking-group-success', (groupReport) => {
-            
+    
         // #region - structure testing 
             // group report contains all expected keys.
             expect(groupReport).to.have.all.keys(
@@ -67,6 +68,7 @@ describe('PromiseBaseBenchmarkEngine - direct calling - sync task & equalArgs.',
     })
 
     it('Each cb method should be called in the expected amount, with the expected arguments', function(done) {
+        // this.skip();
         // spy on each task cb method.
         const spies: SinonSpy<any[], any>[] = FindMaxGroup.tasks.map(task => spy(task, 'method'));
 

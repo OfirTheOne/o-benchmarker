@@ -11,6 +11,7 @@ describe('SampleTimer - async task & equalArgs', function () {
     });
 
     it('SampleTimer.horizontalSampling should execute async-callbacks with no overlaps.', function(done) {
+        // this.skip();
         this.enableTimeouts();
         this.timeout(5000);
 
@@ -65,6 +66,7 @@ describe('SampleTimer - async task & equalArgs', function () {
 
 
     it('SampleTimer should emit an error on sampling-round-call-error event.', function(done) {
+        // this.skip();
         this.enableTimeouts();
         this.timeout(5000);
 

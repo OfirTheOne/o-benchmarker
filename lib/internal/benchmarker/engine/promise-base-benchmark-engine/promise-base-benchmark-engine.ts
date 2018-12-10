@@ -21,14 +21,14 @@ export class PromiseBaseBenchmarkEngine extends AbstractBenchmarkEngine {
         let taskIndex = 0;
 
         this.sampleTimer.on('sampling-process-success', (samplesDurationArray) => {
-            if (/* groupOptions.equalArgs && */ samplesDurationArray.length > 1) { // tasks was equalized.
+            if (samplesDurationArray.length > 1) { // tasks was equalized.
                 // map contains all the tasks sampling duration.
                 tasks.forEach((task, i) => {
                     const totalDuration = samplesDurationArray[i];
                     reports.push(taskToReport(task, tasks[0].options.cycles, totalDuration, task.options.async));
                 });
 
-            } else if (/*!groupOptions.equalArgs && */ samplesDurationArray.length == 1) { // tasks remained independent.
+            } else if (samplesDurationArray.length == 1) { // tasks remained independent.
                 const totalDuration = samplesDurationArray[0]; 
                 reports.push(taskToReport(tasks[taskIndex], tasks[taskIndex].options.cycles, totalDuration, tasks[taskIndex].options.async));
                 taskIndex++;
@@ -81,7 +81,6 @@ export class PromiseBaseBenchmarkEngine extends AbstractBenchmarkEngine {
             const methods = tasks.map((task) => {
                 return { cb: task.method, async: !!task.options.async };
             });
-            // console.log('methods', methods);
             this.sampleTimer.horizontalSampling(methods, usedArgsGen, usedCycles);
         } else {
             this.sampleTimer.independentSampling(

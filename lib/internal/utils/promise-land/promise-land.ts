@@ -32,6 +32,16 @@ export class PromiseLand {
             }
         }
     }
+    /**
+     * @description This method uses PromiseConstructor internally, there for 'cb' callback runs 
+     * automatically 
+     * 
+     * @param cb The callback to wrap in a Promise. 
+     * If it 'AsyncCallback' it must call 'done' method to be resolved.
+     * If it 'SyncCallback' there are no spacial requests.
+     * @param args The arguments array to provide to 'cb', it will be spread (... args).
+     * if 'cb' is of 'AsyncCallback' type, first argument will be 'done' callback.
+     */
     public static promisifyCallback(cb: AsyncCallback, args: any[]): Promise<any>
     public static promisifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<any>
     public static promisifyCallback(cb: FreeCallback, args: any[], cbAsync: boolean = true): Promise<any> {
@@ -50,8 +60,6 @@ export class PromiseLand {
         }));
     }
 
-
-
     private static createTimerDoneFn(resolve: ResolveCallback, reject: RejectCallback): DoneFn {
         let canRun = true;
         const start = performance.now();
@@ -67,6 +75,17 @@ export class PromiseLand {
             }
         }
     }
+
+    /**
+     * @description 
+     * this method uses PromiseConstructor internally, there for 'cb' callback runs automatically.
+     * creat timestamp just before 'cb' start, and what it finished (but before it resolved).
+     * @param cb the callback to wrap in a Promise. 
+     * If it 'AsyncCallback' it must call 'done' method to be resolved.
+     * If it 'SyncCallback' there are no spacial requests .
+     * @param args the arguments array to provide to 'cb', it will be spread (... args).
+     * if 'cb' is of 'AsyncCallback' type, first argument will be 'done' callback.
+     */
     public static timerifyCallback(cb: AsyncCallback, args: any[]): Promise<Timerify>
     public static timerifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<Timerify>
     public static timerifyCallback(cb: FreeCallback, args: any[], cbAsync: boolean = true): Promise<Timerify> {
@@ -76,15 +95,26 @@ export class PromiseLand {
                     const done = PromiseLand.createTimerDoneFn(resolve, reject);
                     (cb as AsyncCallback)(done, ...args);
                 } else {
-                    const start = performance.now();
-                    const result = (cb as SyncCallback)(...args);
-                    const end = performance.now();
-                    resolve({start, end, duration: (end-start), resolvedWith: result});
+                    // const start = performance.now();
+                    // const result = (cb as SyncCallback)(...args);
+                    // const end = performance.now();
+                    const res = PromiseLand.timerifySync(cb, args);
+                    resolve(res);
                 }
             } catch (error) {
                 reject(error);
             }
         }));
+    }
+
+
+    public static timerifySync(cb: SyncCallback, args: any[]): Timerify {
+        if(typeof cb !== 'function') { return; } 
+        const start = performance.now();
+        const result = (cb as SyncCallback)(...args);
+        const end = performance.now();
+        
+        return {start, end, duration: (end-start), resolvedWith: result}
     }
 }
 

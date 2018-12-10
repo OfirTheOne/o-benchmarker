@@ -1,3 +1,4 @@
+import { performance } from 'perf_hooks';
 import * as fs from 'fs';
 import { expect } from 'chai';
 import { stub } from 'sinon';
@@ -19,7 +20,7 @@ const getFileState: AsyncCallback = function findInText(done, path: string): voi
     })
 }
 
-describe('PromiseLand testing.', function () {
+describe('PromiseLand - promisifyCallback testing.', function () {
     it('PromiseLand.promisifyCallback should promisify a sync function that return the expected result.',  function (done) {
         // this.enableTimeouts();
         // this.timeout(5000);
@@ -73,6 +74,85 @@ describe('PromiseLand testing.', function () {
         const args = ['./.gitignore'];
 
         const promisedMethod = PromiseLand.promisifyCallback(originalMethod, args);
+        promisedMethod.then(() => {
+            originalMethod.restore();            
+            done();
+        })
+        .catch((error) => {
+            expect(error).to.be.not.be.undefined;
+            expect(error).to.be.equal(expectedError);
+            done();
+        });
+    });
+});
+
+describe('PromiseLand - timerifyCallback testing.', function () {
+    it('PromiseLand.timerifyCallback should promisify a sync function that return the expected result.',  function (done) {
+        // this.enableTimeouts();
+        // this.timeout(5000);
+        const originalMethod = findInText
+        const args = ['hello everyone', 'llo ev'];
+        const expectedResult = 2;
+
+        const beforeStart = performance.now();
+        const promisedMethod = PromiseLand.timerifyCallback(originalMethod, args, false);
+        const afterEnd = performance.now()
+
+        promisedMethod.then((result) => {
+            expect(result).to.include.keys(['resolvedWith', 'start' ,'end', 'duration']);
+            expect(result.start).to.be.gt(beforeStart);
+            expect(result.end).to.be.lt(afterEnd);
+            expect(result.resolvedWith).to.be.equal(expectedResult);
+
+            done();
+        })
+        .catch((error) => {
+            done(error)
+        });
+    });
+    it('PromiseLand.timerifyCallback should promisify an async function that return the expected result.',  function (done) {
+        // this.enableTimeouts();
+        // this.timeout(5000);
+        const originalMethod = getFileState;
+        const args = ['./.gitignore'];
+
+        const beforeStart = performance.now();
+        const promisedMethod = PromiseLand.timerifyCallback(originalMethod, args);
+        
+        promisedMethod.then((result) => {
+            const afterEnd = performance.now();
+            expect(result).to.be.not.be.undefined;
+            expect(result).to.include.keys(['resolvedWith', 'start', 'end', 'duration']);
+            expect(result.start).to.be.gt(beforeStart);
+            expect(result.end).to.be.lt(afterEnd);
+            expect(result.resolvedWith).to.have.any.keys(['uid', 'size', 'blksize', 'birthtime']);
+            done();
+        })
+        .catch(done);
+    });
+    it('PromiseLand.timerifyCallback should promisify a sync function that throw an error.',  function (done) {
+        const expectedError = new Error('fake error')
+        const originalMethod = stub({findInText}, 'findInText').throws(expectedError); 
+        
+        const args = ['hello everyone', 'llo ev'];
+        const promisedMethod = PromiseLand.timerifyCallback(originalMethod, args, false);
+        promisedMethod.then(() => {
+            originalMethod.restore();            
+            done();
+        })
+        .catch((error) => {
+            expect(error).to.be.not.be.undefined;
+            expect(error).to.be.equal(expectedError);
+            originalMethod.restore();
+            done();
+        });
+    });
+    it('PromiseLand.timerifyCallback should promisify an async function that that throw an error.',  function (done) {
+        const expectedError = new Error('fake error');
+        const originalMethod = stub({getFileState}, 'getFileState').throws(expectedError); 
+        const args = ['./.gitignore'];
+
+        const promisedMethod = PromiseLand.timerifyCallback(originalMethod, args);
         promisedMethod.then(() => {
             originalMethod.restore();            
             done();

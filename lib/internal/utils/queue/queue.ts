@@ -31,10 +31,9 @@ export class Queue<T> {
         }
     }
 
-    public poll(): T {
+    public pull(): T {
         if(!this.isEmpty()) {
-            const element = this.items[0];
-            this.items = this.items.splice(1);
+            const element = this.items.shift()
             return element;
         }
     }

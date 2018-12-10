@@ -1,5 +1,5 @@
 import { EventEmitter } from 'events';
-import { performance } from 'perf_hooks';
+// import { performance } from 'perf_hooks';
 import { generateId } from './../../../utils/common-untitled';
 import { PromiseLand, SyncCallback, AsyncCallback } from './../../../utils/promise-land';
 import { RoundCallError } from '../../../sys-error';
@@ -32,16 +32,11 @@ class Timer {
 
     private async asyncRoundCall(cb: AsyncCallback, args: any[], sampleId: (string | number)): Promise<TimerReport> {
         try {
-            const promisedCallback = PromiseLand.promisifyCallback(cb, args);
-            const startTime = performance.now();
-            await promisedCallback;
-            const endTime  = performance.now();
-
-            const timerReport: TimerReport = { 
-                start: startTime, 
-                duration: (endTime - startTime), 
-                sampleMethodName: cb.name
-            };
+            // const startTime = performance.now();
+            const promisedCallback = PromiseLand.timerifyCallback(cb, args);
+            const {start, end , duration} = await promisedCallback;
+            // const endTime  = performance.now();
+            const timerReport: TimerReport = { start, duration, sampleMethodName: cb.name };
             this.lockdown = false;
             return timerReport;
         } catch (error) {
@@ -52,15 +47,11 @@ class Timer {
 
     private syncRoundCall(cb: SyncCallback, args: any[], sampleId: (string | number)): TimerReport {
         try {
-            const startTime = performance.now();
-            cb(...args);
-            const endTime  = performance.now(); 
-
-            const timerReport: TimerReport = { 
-                start: startTime, 
-                duration: (endTime - startTime), 
-                sampleMethodName: cb.name
-            };
+            // const startTime = performance.now();
+            // cb(...args);
+            // const endTime  = performance.now(); 
+            const {start, end , duration} = PromiseLand.timerifySync(cb, args);
+            const timerReport: TimerReport = { start, duration, sampleMethodName: cb.name };
             this.lockdown = false;
             return timerReport;
         } catch (error) {

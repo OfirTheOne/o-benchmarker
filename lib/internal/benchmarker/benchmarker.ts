@@ -40,20 +40,31 @@ export class Benchmarker {
     }
     private process(tasksGroups: BenchmarkerTasksGroup[], handler:(res: BenchmarkerTasksGroupReport)=>void) {
         if (!tasksGroups) { return; }
-        const groupsQueue = new Queue<BenchmarkerTasksGroup>(tasksGroups);
-        let tasksGroup = groupsQueue.poll();
+        const filteredTasksGroups = this.filterIgnoredAndEmpty(tasksGroups);
+        const groupsQueue = new Queue<BenchmarkerTasksGroup>(filteredTasksGroups);
+
+        let tasksGroup = groupsQueue.pull();
 
         this.engine.on(this.engine.events.success, (groupReport: BenchmarkerTasksGroupReport) => {
             handler(groupReport)
  
-            tasksGroup = groupsQueue.poll();
+            tasksGroup = groupsQueue.pull();
             tasksGroup ? this.engine.measureGroup(tasksGroup) : 0;
         });
+
         this.engine.on(this.engine.events.error, (error) => {
             console.log(error);
             this.engine.cleanupListeners();
         })
         
         tasksGroup ? this.engine.measureGroup(tasksGroup) : 0;
+    }
+
+    private filterIgnoredAndEmpty(tasksGroups: BenchmarkerTasksGroup[]) {
+        for(let i = 0; i < tasksGroups.length; i++) {
+            const tasksGroup = tasksGroups[i];       
+            tasksGroup.tasks = tasksGroup.tasks.filter(task => !task.options.ignore);
+        }
+        return tasksGroups.filter((group => group.tasks.length > 0))
     }
 }

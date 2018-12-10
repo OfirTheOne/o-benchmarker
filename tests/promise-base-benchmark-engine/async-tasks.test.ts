@@ -14,6 +14,7 @@ describe('PromiseBaseBenchmarkEngine - direct calling - async task & equalArgs.'
     });
 
     it('Returned group-report should be structured as expected.', function(done){
+        // this.skip();
         this.enableTimeouts();
         this.timeout(5000);
         benchmarkerEngine.on('benchmarking-group-success', (groupReport) => {
@@ -70,6 +71,7 @@ describe('PromiseBaseBenchmarkEngine - direct calling - async task & equalArgs.'
     });
 
     it('Each cb method should be called in the expected amount, with the expected arguments', function(done) {
+        // this.skip();
         this.enableTimeouts();
         this.timeout(5000);
         // spy on each task cb method.

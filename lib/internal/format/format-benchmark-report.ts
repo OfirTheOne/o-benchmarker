@@ -7,7 +7,7 @@ export class StringifyBenchmarkerObjects {
         const mInfo = groupReport.machineInfo;
         return ( 
             (groupReport.groupDescription ? 
-                `   *  -- ${colors.bold(colors.blue(groupReport.groupDescription))} -- \n` : 
+                `   *  -- ${this.transform(groupReport.groupDescription, [colors.blue, colors.bold])} -- \n` : 
                 '   *' 
             ) +
             groupReport.tasksReports.reduce((acc, report, i) => acc + this.formatSingleReport(report, i+1), '') +            
@@ -19,7 +19,7 @@ export class StringifyBenchmarkerObjects {
     private static formatSingleReport (report: BenchmarkerTaskReport, position: number) {
         return (
     '   *' + '\n' +
-    `   * ${position} - ${colors.bold(colors.green(report.taskName))}` + '\n' +
+    `   * ${position} - ${this.transform(report.taskName, [colors.green, colors.bold])}` + '\n' +
     `   *      ${colors.underline('Duration-Average')} : ${report.durationAverage}`+ '\n' +
     `   *      ${colors.underline('Cycles')} : ${report.cycles}` +'\n' +
     `   *      ${colors.underline('Executed-Method')} : ${report.methodName}` +'\n' +
@@ -44,4 +44,8 @@ export class StringifyBenchmarkerObjects {
         return JSON.stringify(groupReportToStringify, undefined, 2);
     }
 
+
+    private static transform(text: string, transformations: ((text: string)=>string)[]) {
+        return transformations.reduce((text , fn) => fn(text), text)
+    }
 }
