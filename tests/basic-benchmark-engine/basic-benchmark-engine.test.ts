@@ -52,7 +52,7 @@ const FindMaxGroup: BenchmarkerTasksGroup = {
 
 describe('BasicBenchmarkEngine top-level functionalities, direct calling.', function() {
     const benchmarkerEngine = new BasicBenchmarkEngine();
-
+    
     this.afterEach(() => {
         // after each 'it()' test clean all listeners.
         benchmarkerEngine.cleanupListeners();

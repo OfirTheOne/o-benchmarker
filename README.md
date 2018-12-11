@@ -164,7 +164,19 @@ From that point the tasksGroup queue will be passed to the benchmarker, and one 
 * The importing process of the matching files is done with the native promise-base [dynamic import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import#Dynamic_Imports).
 * File scanning by name pattern is done with [`glob`](https://www.npmjs.com/package/glob) module.
 
-### 
+<br>
+
+### Benchmarker Internal Logic 
+Benchmarker module internally constructed with two "body parts", two layers - "*dispatcher*" and "*engine*". <br> 
+The first level - *dispatcher* , prepare the incoming tasks-groups, it handle the high level, more technical configuration of the tasks, dismiss any tasks that marked with `ignore` flag, and any group with empty tasks array (or all ignored tasks), it attach (bind) context to tasks method with `options.context` value (if provided),
+and build the tasksGroup queue.  
+
+After the *dispatcher* is done applying the high level configuration, it will dispatch the first group in the queue to be process by the *engine*, and wait / listen till the *engine* will finish processing it, then move to the next group in the queue.
+
+Each time the *engine* done benchmarking a tasksGroup, it will provide the *dispatcher* a report with information about the current process, the *dispatcher*
+immediately send the report to be written  to `process.stdout`.
+
+In case an error accured will the *engine* process a group, the *dispatcher* will handle the error (write or ignore it), and move to the text group, meaning, if an error was thrown from one task, the all tasks-group process will be terminated.   
 
 <br><hr>
 
@@ -228,7 +240,7 @@ By executing that command the benchmarking process will be triggered. <br>
 | argsGen | ➖ | ()=>any | A method that generates arguments for `BenchmarkerTask.method`, it's repeatedly called on each execution cycle, it return value must be an array, and it will be spread when provided to the method (E.g `method(...argsGen())`). If it defined, `BenchmarkerTask.args` will be ignored. |
 | async | ➖ | boolean | If set to `true`, the method on this task will be handled as async method [(more)](#BenchmarkerMethod). |
 | ignore | ➖ | boolean | If set to `true`, the task will be completely ignored, (removed from the tasks queue).<br> The effect is as if the task was not included in the `BenchmarkerTasksGroup.tasks` array. |
-
+| context | ➖ | any | The `BenchmarkerTask.method` `this` keyword set to the provided value, this is done with [`Function.bind()`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_objects/Function/bind) (this will cause `BenchmarkerTask.method` to be override with a new bound function). |
 <br>
 
 #### BenchmarkerMethod
@@ -291,7 +303,7 @@ By executing that command the benchmarking process will be triggered. <br>
 | ------ | ------ | ------ | ------ |
 | equalArgs | ➖ | boolean | If set to `true`, the arguments provided to the first task `method`, will be provided to all the tasks `method` in the group.<br>The backlash of using it will cause the benchmarking to apply the number of cycles of the first task to the entire group (ignore the other tasks cycles). |
 
-[Abstract Example of group.options.equalArgs effects](#abstract-example-of-group.options.equalargs-effects)
+[Abstract Example of group.options.equalArgs effects](#abstract-example-of-groupoptionsequalargs-effects)
 
 <br>
 

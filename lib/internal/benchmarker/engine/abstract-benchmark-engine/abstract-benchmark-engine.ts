@@ -21,7 +21,7 @@ export abstract class AbstractBenchmarkEngine implements IBenchmarkEngine {
         process.on('exit', this.cleanupListeners);
     }
 
-    public on(event: "benchmarking-group-error", listener: (...args: any[]) => void);    
+    public on(event: "benchmarking-group-error", listener: (error: any) => void);    
     public on(event: "benchmarking-group-success", listener: (groupReport: BenchmarkerTasksGroupReport) => void);
     public on(event: string, listener: (...args: any[]) => void) {
         this.eventHandler.on(event, listener);

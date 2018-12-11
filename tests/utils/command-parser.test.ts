@@ -5,6 +5,7 @@ import { CommandParser } from './../../lib/internal/utils/command-parser';
 describe('CommandParser testing', function () {
 
     it('basic data fetching testing, command as a string.', function () {
+        // this.skip();
         const parser = new CommandParser();
         parser.parseCommand("node ./lib/driver-exec.dev.js **/*.benchmark.ts minfo --json printas=json")
         expect(parser.hasFlag('--json')).to.be.true;
@@ -21,6 +22,7 @@ describe('CommandParser testing', function () {
     });
 
     it('basic data fetching testing, command as a string array', function () {
+        // this.skip();
         const parser = new CommandParser();
         parser.parseCommand([ '**/*.benchmark.ts', '--json', '--minfo'])
         expect(parser.hasFlag('--json')).to.be.true;
@@ -29,6 +31,7 @@ describe('CommandParser testing', function () {
     });
 
     it('complex data fetching testing.', function () {
+        // this.skip();
         const parser = new CommandParser();
         parser.parseCommand("node ./lib/driver-exec.dev.js **/*.benchmark.ts minfo --json printas=json")
         

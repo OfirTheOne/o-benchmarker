@@ -22,6 +22,7 @@ const getFileState: AsyncCallback = function findInText(done, path: string): voi
 
 describe('PromiseLand - promisifyCallback testing.', function () {
     it('PromiseLand.promisifyCallback should promisify a sync function that return the expected result.',  function (done) {
+        // this.skip();
         // this.enableTimeouts();
         // this.timeout(5000);
         const originalMethod = findInText
@@ -38,6 +39,7 @@ describe('PromiseLand - promisifyCallback testing.', function () {
         });
     });
     it('PromiseLand.promisifyCallback should promisify an async function that return the expected result.',  function (done) {
+        // this.skip();
         // this.enableTimeouts();
         // this.timeout(5000);
         const originalMethod = getFileState;
@@ -52,6 +54,7 @@ describe('PromiseLand - promisifyCallback testing.', function () {
         .catch(done);
     });
     it('PromiseLand.promisifyCallback should promisify a sync function that throw an error.',  function (done) {
+        // this.skip();
         const expectedError = new Error('fake error')
         const originalMethod = stub({findInText}, 'findInText').throws(expectedError); 
         
@@ -69,6 +72,7 @@ describe('PromiseLand - promisifyCallback testing.', function () {
         });
     });
     it('PromiseLand.promisifyCallback should promisify an async function that that throw an error.',  function (done) {
+        // this.skip();
         const expectedError = new Error('fake error');
         const originalMethod = stub({getFileState}, 'getFileState').throws(expectedError); 
         const args = ['./.gitignore'];

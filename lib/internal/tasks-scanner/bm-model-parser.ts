@@ -9,10 +9,11 @@ export class ModelParser {
     private static benchmarkerTaskOptionsScheme: joi.ObjectSchema = joi.object().keys({
         taskName: joi.string().required(),
         cycles:  joi.number().integer().min(1).required(),
+        context: joi.any(),
         async: joi.boolean(),
         ignore: joi.boolean(),
         argsGen: joi.func(),
-    } as IntelligentSchemeMap<BenchmarkerTaskOptions>);
+    } as IntelligentSchemeMap<BenchmarkerTaskOptions>).strict();
   
     private static benchmarkerTaskScheme: joi.ObjectSchema = joi.object().keys({
         method: joi.func().required(),
@@ -26,7 +27,7 @@ export class ModelParser {
     } as IntelligentSchemeMap<BenchmarkerTask>);
 
     private static benchmarkerTasksGroupOptionsScheme = joi.object().keys({
-        equalArgs: joi.boolean(),
+        equalArgs: joi.boolean().strict(),
     } as IntelligentSchemeMap<BenchmarkerTasksGroupOptions>);
 
     private static benchmarkerTasksGroupScheme: joi.ObjectSchema = joi.object().keys({
@@ -41,32 +42,5 @@ export class ModelParser {
         const result = joi.validate(tasksGroup, this.benchmarkerTasksGroupScheme);
         return (result.error == null);
     }
-
-
-
-/*
-    public static isBenchmarkerTasksGroup(tasksGroup): tasksGroup is BenchmarkerTasksGroup {  
-        return tasksGroup.hasOwnProperty('groupDescription')
-            && (typeof tasksGroup.groupDescription === 'string')
-            && (!(tasksGroup.hasOwnProperty('groupName') || typeof tasksGroup.groupName === 'string'))
-            && tasksGroup.hasOwnProperty('tasks') && Array.isArray(tasksGroup.tasks) 
-            && (((tasksGroup.tasks) as any[])
-                .every((task) => this.isBenchmarkerTask(task)))
-    }
-    
-    public static isBenchmarkerTask(task): task is BenchmarkerTask { 
-        return task.hasOwnProperty('method') && isFunction(task.method)
-            && (task.args === undefined || Array.isArray(task.args)) 
-            && task.hasOwnProperty('options') && (typeof task.options === 'object')
-            && this.isBenchmarkerTaskOptions(task.options, task.args !== undefined);
-    }
-    
-    public static isBenchmarkerTaskOptions(options, asArgs: boolean): options is BenchmarkerTaskOptions { 
-        return options.hasOwnProperty('taskName') && (typeof options.taskName === 'string')
-            && options.hasOwnProperty('cycles') && (typeof options.cycles === 'number')
-            && (asArgs || (options.hasOwnProperty('argsGen') && options.argsGen !== undefined ))
-            && (!options.argsGen || isFunction(options.argsGen));         
-    }
-*/
 }
 

@@ -16,6 +16,7 @@ export type BenchmarkerMethod
 
 export interface BenchmarkerTaskOptions {
     taskName: string, 
+    context?: any,
     async? : boolean, 
     cycles: number, 
     ignore?: boolean

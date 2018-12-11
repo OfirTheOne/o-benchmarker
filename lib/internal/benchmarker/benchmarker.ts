@@ -1,31 +1,102 @@
+import {EventEmitter} from 'events';
+
 import { IBenchmarkEngine } from './models'
-import { PromiseBaseBenchmarkEngine } from './engine';
 import { BenchmarkerTasksGroup, BenchmarkerTasksGroupReport } from './../../models';
 import { BenchmarkerFlags, IBenchmarkerFlags } from './../../models/internal'
+
+import { PromiseBaseBenchmarkEngine } from './engine';
 import { StringifyBenchmarkerObjects as SBO } from '../format/format-benchmark-report';
 import { Queue } from '../utils/queue';
+import { SwitchLock } from './../utils/switch-lock';
+
 
 export class Benchmarker {
 
     private engine: Readonly<IBenchmarkEngine>;
     private flags: BenchmarkerFlags;
+    private eventHandler: EventEmitter;
+    private switchLock = new SwitchLock(); // process
 
     constructor(flags?: IBenchmarkerFlags) {
         this.flags = new BenchmarkerFlags(flags);
+        this.eventHandler = new EventEmitter();
         this.engine = Object.freeze(new PromiseBaseBenchmarkEngine());
     }
 
+    public on(event: 'benchmarker-process-success', listener: (reportsQueue: Queue<BenchmarkerTasksGroupReport>) => void);
+    public on(event: 'benchmarker-process-error', listener: (error: any) => void);
+    public on(event: string, listener: (...args: any[]) => void) {
+        this.eventHandler.on(event, listener);
+    }
+    public once(event: 'benchmarker-process-success', listener: (reportsQueue: Queue<BenchmarkerTasksGroupReport>) => void);
+    public once(event: 'benchmarker-process-error', listener: (error: any) => void);
+    public once(event: string, listener: (...args: any[]) => void) {
+        this.eventHandler.once(event, listener);
+    }
+
+
     // #region - public
     public echo(tasksGroups: BenchmarkerTasksGroup[]): void {
-        this.process(tasksGroups, (res) => {
-            this.writeResult(res);
+        this.process(tasksGroups, (err, res) => {
+            this.writeResult(res.groupReport);
         });
-    }
+    }   
     public getEngine() {
         return this.engine;
     }
+    public process(tasksGroups: BenchmarkerTasksGroup[], handler:(err: any, 
+        res: {indexInQueue: number, tasksGroup: BenchmarkerTasksGroup, groupReport: BenchmarkerTasksGroupReport })=>void) {
+        if (this.switchLock.isLocked()) { return; }        
+        if (!tasksGroups || tasksGroups.length == 0) { return; }
+        
+        // allowing the code bellow to run only when the queue is empty. 
+        this.switchLock.lock(); 
+        
+        const filteredTasksGroups = this.filterIgnoredAndEmpty(tasksGroups);
+        this.attachContext(filteredTasksGroups);
+        
+        const groupsQueue = new Queue<BenchmarkerTasksGroup>(filteredTasksGroups);
+        const reportQueue = new Queue<BenchmarkerTasksGroupReport>();
+        
+        // if the filtered array is empty, emitting success and unlocking.
+        if (filteredTasksGroups.length == 0) { 
+            this.eventHandler.emit('benchmarker-process-success', reportQueue);
+            this.switchLock.unlock();
+            return; 
+        }
+        
+        let indexInQueue = 0;
+        let tasksGroup = groupsQueue.pull();
+
+        this.engine.on(this.engine.events.success, (groupReport: BenchmarkerTasksGroupReport) => {
+            reportQueue.add(groupReport);
+            if(handler) {
+                handler(undefined, {indexInQueue, tasksGroup, groupReport});
+            }
+            tasksGroup = groupsQueue.pull();
+            indexInQueue++;
+
+            if(tasksGroup) { // continue to the next tasksGroup in queue, in process.
+                 this.engine.measureGroup(tasksGroup);
+            } else { // the queue is empty, process finished.
+                this.eventHandler.emit('benchmarker-process-success', reportQueue);
+                this.switchLock.unlock();
+            } 
+        });
+
+        this.engine.on(this.engine.events.error, (error) => {
+            this.eventHandler.emit('benchmarker-process-error', error);
+            handler(error, undefined);
+            this.switchLock.unlock();
+            this.engine.cleanupListeners();
+        })
+        
+        this.engine.measureGroup(tasksGroup);
+
+    } 
     // #endregion
-    
+   
+    // #region
     private writeResult(groupReport: BenchmarkerTasksGroupReport) {
         if(this.flags.printas == 'json') {
             console.log(
@@ -38,27 +109,6 @@ export class Benchmarker {
         }
         console.log("\x1b[0m"); // reset console style
     }
-    private process(tasksGroups: BenchmarkerTasksGroup[], handler:(res: BenchmarkerTasksGroupReport)=>void) {
-        if (!tasksGroups) { return; }
-        const filteredTasksGroups = this.filterIgnoredAndEmpty(tasksGroups);
-        const groupsQueue = new Queue<BenchmarkerTasksGroup>(filteredTasksGroups);
-
-        let tasksGroup = groupsQueue.pull();
-
-        this.engine.on(this.engine.events.success, (groupReport: BenchmarkerTasksGroupReport) => {
-            handler(groupReport)
- 
-            tasksGroup = groupsQueue.pull();
-            tasksGroup ? this.engine.measureGroup(tasksGroup) : 0;
-        });
-
-        this.engine.on(this.engine.events.error, (error) => {
-            console.log(error);
-            this.engine.cleanupListeners();
-        })
-        
-        tasksGroup ? this.engine.measureGroup(tasksGroup) : 0;
-    }
 
     private filterIgnoredAndEmpty(tasksGroups: BenchmarkerTasksGroup[]) {
         for(let i = 0; i < tasksGroups.length; i++) {
@@ -67,4 +117,17 @@ export class Benchmarker {
         }
         return tasksGroups.filter((group => group.tasks.length > 0))
     }
+
+    private attachContext(tasksGroups: BenchmarkerTasksGroup[]) {
+        tasksGroups.forEach(group => {
+            group.tasks.forEach(task => {
+                const { method, options } = task;
+                if(options.context !== undefined) {
+                    const boundedMethod = (method as Function).bind(options.context);
+                    task.method = boundedMethod;
+                }
+            })
+        })
+    }
+    // #endregion
 }
