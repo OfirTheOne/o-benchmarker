@@ -7,8 +7,11 @@ class Queue {
             this.items = new Array();
         }
         else if (Array.isArray(elementOrMaxSize)) {
-            this.maxSize = -1;
             this.items = new Array(...elementOrMaxSize);
+        }
+        else if (arguments.length == 0) {
+            this.maxSize = -1;
+            this.items = new Array();
         }
     }
     isFull() {
@@ -26,12 +29,17 @@ class Queue {
             return false;
         }
     }
-    poll() {
+    pull() {
         if (!this.isEmpty()) {
-            const element = this.items[0];
-            this.items = this.items.splice(1);
+            const element = this.items.shift();
             return element;
         }
+    }
+    /**
+     * @returns copy of the items array in the queue
+     */
+    toArray() {
+        return this.items.splice(0);
     }
 }
 exports.Queue = Queue;

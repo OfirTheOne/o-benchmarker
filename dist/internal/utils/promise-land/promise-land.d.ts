@@ -17,10 +17,31 @@ interface Timerify {
  * */
 export declare class PromiseLand {
     private static createDoneFn;
+    /**
+     * @description This method uses PromiseConstructor internally, there for 'cb' callback runs
+     * automatically
+     *
+     * @param cb The callback to wrap in a Promise.
+     * If it 'AsyncCallback' it must call 'done' method to be resolved.
+     * If it 'SyncCallback' there are no spacial requests.
+     * @param args The arguments array to provide to 'cb', it will be spread (... args).
+     * if 'cb' is of 'AsyncCallback' type, first argument will be 'done' callback.
+     */
     static promisifyCallback(cb: AsyncCallback, args: any[]): Promise<any>;
     static promisifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<any>;
     private static createTimerDoneFn;
+    /**
+     * @description
+     * this method uses PromiseConstructor internally, there for 'cb' callback runs automatically.
+     * creat timestamp just before 'cb' start, and what it finished (but before it resolved).
+     * @param cb the callback to wrap in a Promise.
+     * If it 'AsyncCallback' it must call 'done' method to be resolved.
+     * If it 'SyncCallback' there are no spacial requests .
+     * @param args the arguments array to provide to 'cb', it will be spread (... args).
+     * if 'cb' is of 'AsyncCallback' type, first argument will be 'done' callback.
+     */
     static timerifyCallback(cb: AsyncCallback, args: any[]): Promise<Timerify>;
     static timerifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<Timerify>;
+    static timerifySync(cb: SyncCallback, args: any[]): Timerify;
 }
 export {};

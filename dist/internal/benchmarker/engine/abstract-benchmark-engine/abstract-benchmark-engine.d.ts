@@ -11,7 +11,7 @@ export declare abstract class AbstractBenchmarkEngine implements IBenchmarkEngin
         error: "benchmarking-group-error";
     }>;
     constructor();
-    on(event: "benchmarking-group-error", listener: (...args: any[]) => void): any;
+    on(event: "benchmarking-group-error", listener: (error: any) => void): any;
     on(event: "benchmarking-group-success", listener: (groupReport: BenchmarkerTasksGroupReport) => void): any;
     /**
      * @description

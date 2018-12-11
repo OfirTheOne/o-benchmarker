@@ -65,16 +65,26 @@ class PromiseLand {
                     cb(done, ...args);
                 }
                 else {
-                    const start = perf_hooks_1.performance.now();
-                    const result = cb(...args);
-                    const end = perf_hooks_1.performance.now();
-                    resolve({ start, end, duration: (end - start), resolvedWith: result });
+                    // const start = performance.now();
+                    // const result = (cb as SyncCallback)(...args);
+                    // const end = performance.now();
+                    const res = PromiseLand.timerifySync(cb, args);
+                    resolve(res);
                 }
             }
             catch (error) {
                 reject(error);
             }
         }));
+    }
+    static timerifySync(cb, args) {
+        if (typeof cb !== 'function') {
+            return;
+        }
+        const start = perf_hooks_1.performance.now();
+        const result = cb(...args);
+        const end = perf_hooks_1.performance.now();
+        return { start, end, duration: (end - start), resolvedWith: result };
     }
 }
 exports.PromiseLand = PromiseLand;

@@ -18,7 +18,7 @@ function tasksGroupImportScanner(suffixGlobPattern) {
             for (const key in (_module.exportObject)) {
                 if (_module.exportObject.hasOwnProperty(key)) {
                     const exportField = _module.exportObject[key];
-                    if (bm_model_parser_1.ModelParser.isBenchmarkerTasksGroup(exportField)) {
+                    if (bm_model_parser_1.ModelParser.benchmarkerTasksGroupValidator(exportField)) {
                         tasksGroups.push(exportField);
                     }
                 }

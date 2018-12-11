@@ -7,8 +7,10 @@ export declare type BenchmarkerTask = {
 export declare type BenchmarkerMethod = ((done: (err?: any, res?: any) => void, ...args: any[]) => any) | ((...args: any[]) => any);
 export interface BenchmarkerTaskOptions {
     taskName: string;
+    context?: any;
     async?: boolean;
     cycles: number;
+    ignore?: boolean;
     argsGen?: () => any;
 }
 export interface BenchmarkerTaskReport {

@@ -1,27 +1,37 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const util_1 = require("util");
+const joi = require("joi");
 class ModelParser {
-    static isBenchmarkerTasksGroup(tasksGroup) {
-        return tasksGroup.hasOwnProperty('groupDescription')
-            && (typeof tasksGroup.groupDescription === 'string')
-            && (!(tasksGroup.hasOwnProperty('taskName') || typeof tasksGroup.taskName === 'string'))
-            && tasksGroup.hasOwnProperty('tasks') && Array.isArray(tasksGroup.tasks)
-            && ((tasksGroup.tasks)
-                .every((task) => this.isBenchmarkerTask(task)));
-    }
-    static isBenchmarkerTask(task) {
-        return task.hasOwnProperty('method') && util_1.isFunction(task.method)
-            && (task.args === undefined || Array.isArray(task.args))
-            && task.hasOwnProperty('options') && (typeof task.options === 'object')
-            && this.isBenchmarkerTaskOptions(task.options, task.args !== undefined);
-    }
-    static isBenchmarkerTaskOptions(options, asArgs) {
-        return options.hasOwnProperty('taskName') && (typeof options.taskName === 'string')
-            && options.hasOwnProperty('cycles') && (typeof options.cycles === 'number')
-            && (asArgs || (options.hasOwnProperty('argsGen') && options.argsGen !== undefined))
-            && (!options.argsGen || util_1.isFunction(options.argsGen));
+    static benchmarkerTasksGroupValidator(tasksGroup) {
+        const result = joi.validate(tasksGroup, this.benchmarkerTasksGroupScheme);
+        return (result.error == null);
     }
 }
+ModelParser.benchmarkerTaskOptionsScheme = joi.object().keys({
+    taskName: joi.string().required(),
+    cycles: joi.number().integer().min(1).required(),
+    context: joi.any(),
+    async: joi.boolean(),
+    ignore: joi.boolean(),
+    argsGen: joi.func(),
+}).strict();
+ModelParser.benchmarkerTaskScheme = joi.object().keys({
+    method: joi.func().required(),
+    args: joi.array(),
+    options: ModelParser.benchmarkerTaskOptionsScheme.required()
+        .when('args', {
+        is: joi.empty(),
+        then: joi.object({ argsGen: joi.required() })
+    })
+});
+ModelParser.benchmarkerTasksGroupOptionsScheme = joi.object().keys({
+    equalArgs: joi.boolean().strict(),
+});
+ModelParser.benchmarkerTasksGroupScheme = joi.object().keys({
+    groupName: joi.string(),
+    groupDescription: joi.string().required(),
+    tasks: joi.array().items(ModelParser.benchmarkerTaskScheme).required(),
+    options: ModelParser.benchmarkerTasksGroupOptionsScheme
+});
 exports.ModelParser = ModelParser;
 //# sourceMappingURL=bm-model-parser.js.map

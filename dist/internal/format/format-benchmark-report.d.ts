@@ -8,4 +8,5 @@ export declare class StringifyBenchmarkerObjects {
     static groupReportsAsJson(groupReport: BenchmarkerTasksGroupReport, formatOptions: {
         machineInfo: boolean;
     }): string;
+    private static transform;
 }

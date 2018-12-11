@@ -2,6 +2,12 @@
   "name": "o-benchmarker",
   "version": "2.2.0",
   "description": "Node.JS benchmarking tool.",
+  "homepage": "https://github.com/OfirTheOne/o-benchmarker/#readme",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/OfirTheOne/o-benchmarker.git"
+  },
+  "os" : [ "darwin", "linux", "win32" ],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

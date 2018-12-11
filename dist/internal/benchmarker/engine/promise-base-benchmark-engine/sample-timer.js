@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
-const perf_hooks_1 = require("perf_hooks");
+// import { performance } from 'perf_hooks';
 const common_untitled_1 = require("./../../../utils/common-untitled");
 const promise_land_1 = require("./../../../utils/promise-land");
 const sys_error_1 = require("../../../sys-error");
@@ -37,15 +37,11 @@ class Timer {
     asyncRoundCall(cb, args, sampleId) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const promisedCallback = promise_land_1.PromiseLand.promisifyCallback(cb, args);
-                const startTime = perf_hooks_1.performance.now();
-                yield promisedCallback;
-                const endTime = perf_hooks_1.performance.now();
-                const timerReport = {
-                    start: startTime,
-                    duration: (endTime - startTime),
-                    sampleMethodName: cb.name
-                };
+                // const startTime = performance.now();
+                const promisedCallback = promise_land_1.PromiseLand.timerifyCallback(cb, args);
+                const { start, end, duration } = yield promisedCallback;
+                // const endTime  = performance.now();
+                const timerReport = { start, duration, sampleMethodName: cb.name };
                 this.lockdown = false;
                 return timerReport;
             }
@@ -57,14 +53,11 @@ class Timer {
     }
     syncRoundCall(cb, args, sampleId) {
         try {
-            const startTime = perf_hooks_1.performance.now();
-            cb(...args);
-            const endTime = perf_hooks_1.performance.now();
-            const timerReport = {
-                start: startTime,
-                duration: (endTime - startTime),
-                sampleMethodName: cb.name
-            };
+            // const startTime = performance.now();
+            // cb(...args);
+            // const endTime  = performance.now(); 
+            const { start, end, duration } = promise_land_1.PromiseLand.timerifySync(cb, args);
+            const timerReport = { start, duration, sampleMethodName: cb.name };
             this.lockdown = false;
             return timerReport;
         }
