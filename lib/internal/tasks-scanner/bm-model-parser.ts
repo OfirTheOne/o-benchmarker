@@ -8,23 +8,18 @@ export class ModelParser {
 
     private static benchmarkerTaskOptionsScheme: joi.ObjectSchema = joi.object().keys({
         taskName: joi.string().required(),
-        cycles:  joi.number().integer().min(1).required(),
+        cycles:  joi.number().integer().min(1).strict().required(),
         context: joi.any(),
-        async: joi.boolean(),
-        ignore: joi.boolean(),
+        async: joi.boolean().strict(),
+        ignore: joi.boolean().strict(),
         argsGen: joi.func(),
-    } as IntelligentSchemeMap<BenchmarkerTaskOptions>).strict();
+    } as IntelligentSchemeMap<BenchmarkerTaskOptions>);//.strict();
   
     private static benchmarkerTaskScheme: joi.ObjectSchema = joi.object().keys({
         method: joi.func().required(),
         args: joi.array(),
         options: ModelParser.benchmarkerTaskOptionsScheme.required()
-            .when('args', {
-                is: joi.empty(),
-                then: joi.object({ argsGen: joi.required() })
-            })
-        
-    } as IntelligentSchemeMap<BenchmarkerTask>);
+    } as IntelligentSchemeMap<BenchmarkerTask>).or('args','options.argsGen');
 
     private static benchmarkerTasksGroupOptionsScheme = joi.object().keys({
         equalArgs: joi.boolean().strict(),

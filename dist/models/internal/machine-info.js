@@ -10,6 +10,10 @@ class MachineInfo {
         this.osPlatform = os.platform(); // win32
         this.osName = os.type(); // Windows_NT
         this.osCpuArch = os.arch(); //x64
+        this._env = {
+            nodeVersion: process.versions.node,
+            pid: process.pid,
+        };
     }
 }
 exports.MachineInfo = MachineInfo;

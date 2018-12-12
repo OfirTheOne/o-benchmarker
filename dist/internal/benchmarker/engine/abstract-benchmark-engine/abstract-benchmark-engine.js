@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
-const os = require("os");
 const internal_1 = require("../../../../models/internal");
 const EVENTS_NAMES = {
     success: "benchmarking-group-success",
@@ -27,14 +26,4 @@ function createTasksGroupReport(groupName, groupDescription, tasksReports, machi
     return { groupName, groupDescription, tasksReports, machineInfo };
 }
 exports.createTasksGroupReport = createTasksGroupReport;
-function getMachineInfo() {
-    const cpus = os.cpus();
-    return {
-        cpusModel: cpus[0].model,
-        numberOfCpus: cpus.length,
-        osPlatform: os.platform(),
-        osName: os.type(),
-        osCpuArch: os.arch() //x64
-    };
-}
 //# sourceMappingURL=abstract-benchmark-engine.js.map

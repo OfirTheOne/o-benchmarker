@@ -43,13 +43,3 @@ export function createTaskReport(durationAverage: number, cycles: number, taskNa
 export function createTasksGroupReport(groupName: string, groupDescription: string, tasksReports: BenchmarkerTaskReport[], machineInfo: MachineInfo) {
     return { groupName, groupDescription, tasksReports, machineInfo } as BenchmarkerTasksGroupReport;
 }
-function getMachineInfo(): MachineInfo {
-    const cpus = os.cpus();
-    return {
-        cpusModel: cpus[0].model, // Intel ...
-        numberOfCpus: cpus.length, // 4
-        osPlatform: os.platform(), // win32
-        osName: os.type(), // Windows_NT
-        osCpuArch: os.arch() //x64
-    };
-}

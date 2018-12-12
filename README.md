@@ -250,7 +250,7 @@ By executing that command the benchmarking process will be triggered. <br>
 > A BenchmarkerMethod appeared only in  BenchmarkerTask.method, and can be an async or sync method.<br>
 > In case of **async method** (when the `async` field in the task option is set to `true`), it will provided with `done` callback for the first argument, the rest of the argument configured (via `args` field or with `genArgs` field in the task options) will follow after.<br> 
 > To resolve the method, just like a Promise, the `done` callback must be called, it takes `(err?: any, result?: any)`, to 'reject' / throw error, you need to provide it with a first argument (!= undefined), or just `throw` an error.<br>
-> In case of a **sync method** (when the `async` field in the task option not defined, or set to `false`) it will provided with the argument configured (via `args` field or with `genArgs` field in the task options)
+> In case of a **sync method** (when the `async` field in the task option not defined, or set to `false`) it will provided with the argument configured (via `args` field or with `genArgs` field in the task options).
 
 #### &raquo; Sync Method :
 ```ts
@@ -334,6 +334,7 @@ By executing that command the benchmarking process will be triggered. <br>
 | osPlatform | ✔ | string | The value of `os.platform()`. |
 | osName | ✔ | string | The value of `os.type()`. |
 | osCpuArch | ✔ | string | The value of `os.arch()`. |
+|_env | ✔ | { nodeVersion: string, pid: number } | `nodeVersion` get the value of `process.versions.node`. <br>`pid` get the value of `process.pid`.| 
 
 <br><hr>
 
@@ -452,7 +453,7 @@ Here's the tasks-report after changing the `iterations` parameter from 10000 to 
 
 ### Old-School VS Fancy-Sugar syntax 
 
-with all the great build-in function in Es6 there's a lot of short and fancy ways to do any action, <br>
+With all the great build-in function in Es6 there's a lot of short and fancy ways to do any action, <br>
 but new and shiny is not always better ... <br>
 Here there are three pretty common implementations of finding max in an array of numbers, the first is the old school way, using simple `for` loop, the other ways is with the build-in Es6 functions. <br> 
 So which one of the them run faster?
@@ -562,6 +563,8 @@ Interesting conclusions, you'll think the build-in one will be optimized ..
 
 Lets take the following :
 ```ts
+... 
+
 function sum(array) { // return the sum of the array }
 function max(array) { // return the max in the array }
 function min(array) { // return the min in the array }
@@ -612,7 +615,7 @@ This will be resulted with **each task will be benchmark independently**, so :
 | :---:           | :---:                | :---:                | :---:                | :---: | :---:                |
 |  min            | [2, 12, 3, 54, 4, 63] | [2, 12, 3, 54, 4, 63] | [2, 12, 3, 54, 4, 63] | ...   | [2, 12, 3, 54, 4, 63] |
 
-sum will be provided with a new random array on each cycle, same for max,  min provided with `[2, 12, 3, 54, 4, 63]` rapidity.
+`sum` will be provided with a new random array on each cycle, same for `max`,  `min` provided with `[2, 12, 3, 54, 4, 63]` rapidity.
 
 
 In a case `SimpleExampleGroup.options.equalArgs` is set to `true` : <br> 

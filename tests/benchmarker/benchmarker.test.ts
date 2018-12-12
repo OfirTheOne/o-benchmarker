@@ -23,7 +23,7 @@ describe('Benchmarker testing', function() {
         CryptoPlayGroupClone.tasks[1].options.ignore = true;
         const cryptoPlayGroupSpies: SinonSpy<any[], any>[] = CryptoPlayGroupClone.tasks.map(task => spy(task, 'method'));
 
-        benchmarker.on('benchmarker-process-success', (reportsGroup) => {
+        benchmarker.on('benchmarker-done', () => {
             done();
         })
         benchmarker.on('benchmarker-process-error', (error) => {
