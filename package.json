@@ -7,14 +7,12 @@
     "type": "git",
     "url": "https://github.com/OfirTheOne/o-benchmarker.git"
   },
-  "os": [
-    "darwin",
-    "linux",
-    "win32"
-  ],
+  "os": ["darwin", "linux", "win32"],
+  "keywords": ["benchmarker", "benchmark", "async-benchmark", "performance", "time", "timer", "measure", "measurement"],
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
+    "exp-test": "mocha --require ts-node/register experimental/tests/**/*.test.ts",
     "mocha-test": "mocha --require ts-node/register tests/**/*.test.ts",
     "test:win": "SET NODE_ENV=test&& npm run mocha-test",
     "test:lin": "NODE_ENV=test&& npm run mocha-test",

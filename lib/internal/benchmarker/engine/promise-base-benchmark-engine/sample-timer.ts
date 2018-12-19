@@ -1,8 +1,8 @@
+import { SwitchLock } from './../../../utils/switch-lock/switch-lock';
 import { EventEmitter } from 'events';
-// import { performance } from 'perf_hooks';
 import { generateId } from './../../../utils/common-untitled';
 import { PromiseLand, SyncCallback, AsyncCallback } from './../../../utils/promise-land';
-import { RoundCallError } from '../../../sys-error';
+import { RoundCallError, TimeoutError } from '../../../sys-error';
 
 
 interface TimerReport {
@@ -11,56 +11,78 @@ interface TimerReport {
     sampleMethodName: string
 }
 
+interface RoundCallData {
+    async: boolean,
+    timeout?: number,
+}
+
+
 class Timer {
     private _id: Readonly<string>;
-    private lockdown: boolean = false;
+    private switchLock = new SwitchLock();
     constructor() {
         this._id = generateId();
     }
 
-    public async singleSample(cb: AsyncCallback | SyncCallback, args: any[], sampleId: (string | number), async: boolean = false) {
-        if (this.lockdown) { return; }
-        this.lockdown = true;
+    public async singleSample(cb: AsyncCallback | SyncCallback, args: any[], sampleId: (string | number), roundCallData: RoundCallData ){//async: boolean = false) {
+        if (this.switchLock.isLocked()) { return; }
+        this.switchLock.lock();
         let timerReport;
-        if (async) {
-            timerReport = await this.asyncRoundCall(cb, args, sampleId);
+        if (roundCallData.async) {
+            timerReport = await this.asyncRoundCall(cb, args, sampleId, roundCallData.timeout);
         } else {
             timerReport = this.syncRoundCall(cb, args, sampleId);
         }
+        this.switchLock.unlock();
         return timerReport;
     }
 
-    private async asyncRoundCall(cb: AsyncCallback, args: any[], sampleId: (string | number)): Promise<TimerReport> {
+    /**
+     * @throws RoundCallError if any error raised from 'cb' callback, and the error is not of type TimeoutError.
+     * @throws TimeoutError from timerifyCallback method, ('cb' callback was limit with timeout, and exceeded).
+     * 
+     * @param cb an async callback to promisify and timerify - wrap in a promise and measure execution time.
+     * @param args argument array for cb.
+     * @param sampleId identify the current 'sample' (round call), usually the current cycle number.
+     * @param timeout number in ms, to time limit the cb callback, it it exceeded a TimeoutError error will be raised.
+     */
+    private async asyncRoundCall(cb: AsyncCallback, args: any[], sampleId: (string | number), timeout: number): Promise<TimerReport> {
         try {
-            // const startTime = performance.now();
-            const promisedCallback = PromiseLand.timerifyCallback(cb, args);
-            const {start, end , duration} = await promisedCallback;
-            // const endTime  = performance.now();
+            const promisedCallback = PromiseLand.timerifyCallback(cb, args, true, {
+                timeout, errorCtor: TimeoutError
+            });
+            const {start, duration} = await promisedCallback;
             const timerReport: TimerReport = { start, duration, sampleMethodName: cb.name };
-            this.lockdown = false;
             return timerReport;
         } catch (error) {
-            this.lockdown = false;
-            throw new RoundCallError(error, cb, args, sampleId, true); //{ error, method: cb, args, sampleId, async: true } as TimerError;
+            this.switchLock.unlock();
+            if(error.hasOwnProperty('timeLimit')) {
+                throw error;
+            } else {
+                throw new RoundCallError(error, cb, args, sampleId, true);
+            }
         }
     }
 
+    /**
+     * @throws RoundCallError if any error raised from 'cb' callback, and the error is not of type TimeoutError.
+     * 
+     * @param cb a sync callback timerify - measure execution time.
+     * @param args argument array for cb.
+     * @param sampleId identify the current 'sample' (round call), usually the current cycle number.
+     */
     private syncRoundCall(cb: SyncCallback, args: any[], sampleId: (string | number)): TimerReport {
         try {
-            // const startTime = performance.now();
-            // cb(...args);
-            // const endTime  = performance.now(); 
-            const {start, end , duration} = PromiseLand.timerifySync(cb, args);
+            const {start, duration} = PromiseLand.timerifySync(cb, args);
             const timerReport: TimerReport = { start, duration, sampleMethodName: cb.name };
-            this.lockdown = false;
             return timerReport;
         } catch (error) {
-            this.lockdown = false;
+            this.switchLock.unlock();
             throw new RoundCallError(error, cb, args, sampleId, false);
-            // throw { error, method: cb, args, sampleId, async: false } as TimerError;
         }
     }
 }
+
 
 
 export class SampleTimer {
@@ -72,33 +94,38 @@ export class SampleTimer {
         this.eventHandler = new EventEmitter();
     }
 
-    public on(event: 'sampling-process-success', listener: (totalDurationArray: number[], timerReportsMap: {[key: number] : TimerReport[]}) => void);
+    public on(event: 'sampling-process-success', listener: (
+        stats: { totalDurationArray: number[], minArray: number[], maxArray: number[] }, 
+        timerReportsMap: {[key: number] : TimerReport[]}) => void);
     public on(event: 'sampling-process-error', listener: (error: any) => void);
-    public on(event: 'sampling-round-call-error', listener: (roundCallError: RoundCallError) => void);
-
+    public on(event: 'sampling-round-call-error', listener: (roundCallError: RoundCallError | TimeoutError) => void);
     public on(event: string, listener: (...args: any[]) => void) {
         this.eventHandler.on(event, listener);
     }
 
-    public async independentSampling(methodData: { cb: (AsyncCallback | SyncCallback), async: boolean }, genArgs:() => any, cycles: number) {
-        await this.horizontalSampling([methodData], genArgs, cycles);
+    public async independentRoundCall(methodRoundCall: { method: (AsyncCallback | SyncCallback), data: RoundCallData }, genArgs:() => any, cycles: number) {
+        await this.horizontalRoundCall([methodRoundCall], genArgs, cycles);
     }
 
-    public async horizontalSampling(methodsDataArray: { cb: (AsyncCallback | SyncCallback), async: boolean }[], genArgs:() => any, cycles: number): Promise<void> {
+    public async horizontalRoundCall(methodRoundCallArray: { method: (AsyncCallback | SyncCallback), data: RoundCallData }[], genArgs:() => any, cycles: number): Promise<void> {
 
-        const totalDurationArray: number[] = new Array(methodsDataArray.length).fill(0);
-        const timerReportsMap: {[key: number] : TimerReport[]} = methodsDataArray
+        const totalDurationArray: number[] = new Array(methodRoundCallArray.length).fill(0);
+        const timerReportsMap: {[key: number] : TimerReport[]} = methodRoundCallArray
             .reduce<{[key: number] : TimerReport[]}>((map ,_ , i) => { map[i] = []; return map; },{});
         
         let roundCallError = false;
         try {
+            const minArray = new Array<number>(methodRoundCallArray.length).fill(Number.MAX_SAFE_INTEGER);
+            const maxArray = new Array<number>(methodRoundCallArray.length).fill(Number.MIN_SAFE_INTEGER);
+            
             for(let cycle = 0; (cycle < cycles) && !roundCallError; cycle++) {
+
                 const usedArgs = genArgs();
-                for(let i = 0; (i < methodsDataArray.length) && !roundCallError; i++) {
-                    const methodData = methodsDataArray[i];
+                for(let i = 0; (i < methodRoundCallArray.length) && !roundCallError; i++) {
+                    const roundCall = methodRoundCallArray[i];
                     let report: TimerReport;
                     try {
-                        report = await this.timer.singleSample(methodData.cb, usedArgs, cycle, methodData.async);
+                        report = await this.timer.singleSample(roundCall.method, usedArgs, cycle, roundCall.data);
                     } catch (error) {
                         this.eventHandler.emit('sampling-round-call-error', error);
                         roundCallError = true;
@@ -106,10 +133,15 @@ export class SampleTimer {
                     }
                     timerReportsMap[i].push(report)
                     totalDurationArray[i] += report.duration;
+                    if(report.duration < minArray[i]) { minArray[i] = report.duration };
+                    if(report.duration > maxArray[i]) { maxArray[i] = report.duration };  
+
                 }
             }
             if(!roundCallError) {
-                this.eventHandler.emit('sampling-process-success', totalDurationArray, timerReportsMap);            
+                this.eventHandler.emit('sampling-process-success', 
+                    { totalDurationArray, minArray, maxArray } , timerReportsMap
+                );            
             }
         } catch (error) {
             this.eventHandler.emit('sampling-process-error', error);

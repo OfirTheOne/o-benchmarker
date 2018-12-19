@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import { spy, SinonSpy } from 'sinon';
 
 import { Benchmarker } from './../../lib/internal/benchmarker/benchmarker';
-import { recursiveDeepClone } from '../helpers';
-import { CryptoPlayGroup, FindMaxGroup } from '../tasks-group'
+import { recursiveDeepClone } from '../test-resource/helpers';
+import { CryptoPlayGroup, FindMaxGroup } from '../test-resource/tasks-group'
 import { BenchmarkerTasksGroup } from '../../lib/models';
 
 describe('Benchmarker testing', function() {

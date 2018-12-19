@@ -5,7 +5,7 @@ import { CYCLES } from './../../consts';
 
 
 function pbkdf2RandomArray(done, arrayToPass: number[],  arrayToSalt: number[]) { 
-    crypto.pbkdf2(arrayToPass.toString(), arrayToSalt.toString(), 5000, 64, 'sha512', 
+    crypto.pbkdf2(arrayToPass.toString(), arrayToSalt.toString(), 10000, 64, 'sha512', 
         (err, derivedKey) => {  
             done(err, {haxKey: derivedKey.toString('hex')});
         }
@@ -13,7 +13,7 @@ function pbkdf2RandomArray(done, arrayToPass: number[],  arrayToSalt: number[]) 
 }
 
 function pbkdf2SyncRandomArray(arrayToPass: number[],  arrayToSalt: number[]) { 
-    const key = crypto.pbkdf2Sync(arrayToPass.toString(), arrayToSalt.toString(), 5000, 64, 'sha512');
+    const key = crypto.pbkdf2Sync(arrayToPass.toString(), arrayToSalt.toString(), 10000, 64, 'sha512');
     return key;
 }
 

@@ -3,6 +3,7 @@ import * as fs from 'fs';
 import { expect } from 'chai';
 import { stub } from 'sinon';
 import { PromiseLand, AsyncCallback, SyncCallback } from './../../lib/internal/utils/promise-land';
+import { TimeoutError } from './../../lib/internal/sys-error/errors';
 
 const findInText: SyncCallback = function findInText(text: string, subText: string): number {
     let index = -1;
@@ -134,6 +135,32 @@ describe('PromiseLand - timerifyCallback testing.', function () {
         })
         .catch(done);
     });
+    it('PromiseLand.timerifyCallback should promisify an async with timeout and resolve.',  function (done) {
+        // this.enableTimeouts();
+        this.timeout(2000);
+        const originalMethod = function doWork(done, time: number) { 
+            const now = Date.now();
+            while(Date.now() - now < time) { } 
+            done();
+        };
+        const args = ['1000'];
+
+        const beforeStart = performance.now();
+        const promisedMethod = PromiseLand.timerifyCallback(originalMethod, args, true, { timeout: 2000 });
+        
+        promisedMethod.then((result) => {
+            const afterEnd = performance.now();
+            expect(result).to.be.not.be.undefined;
+            expect(result).to.include.keys(['resolvedWith', 'start', 'end', 'duration']);
+            expect(result.start).to.be.gt(beforeStart);
+            expect(result.end).to.be.lt(afterEnd);
+            // expect(result.resolvedWith).to.have.any.keys(['uid', 'size', 'blksize', 'birthtime']);
+            done();
+        })
+        .catch(done);
+    });
+
+
     it('PromiseLand.timerifyCallback should promisify a sync function that throw an error.',  function (done) {
         const expectedError = new Error('fake error')
         const originalMethod = stub({findInText}, 'findInText').throws(expectedError); 
@@ -151,7 +178,7 @@ describe('PromiseLand - timerifyCallback testing.', function () {
             done();
         });
     });
-    it('PromiseLand.timerifyCallback should promisify an async function that that throw an error.',  function (done) {
+    it('PromiseLand.timerifyCallback should promisify an async function that throw an error.',  function (done) {
         const expectedError = new Error('fake error');
         const originalMethod = stub({getFileState}, 'getFileState').throws(expectedError); 
         const args = ['./.gitignore'];
@@ -164,6 +191,30 @@ describe('PromiseLand - timerifyCallback testing.', function () {
         .catch((error) => {
             expect(error).to.be.not.be.undefined;
             expect(error).to.be.equal(expectedError);
+            done();
+        });
+    });
+    it('PromiseLand.timerifyCallback should promisify an async function and throw a timeout error.',  function (done) {
+        const twoSecondsJob = function (done , a, b) {
+            const clock = setTimeout(() => { 
+                    clearTimeout(clock);
+                    done(undefined, a+b); 
+                }, 2000
+            );
+        }
+        // const expectedErrorMessage = 'timeout excited !';
+        const timeout = 500;
+        const args = [5, 10];
+        const expectedError = new TimeoutError(timeout);
+
+        const promisedMethod = PromiseLand.timerifyCallback(twoSecondsJob, args, true, { 
+            timeout, 
+            errorCtor: TimeoutError 
+        });
+        promisedMethod.then( () => done(new Error('should not resolve.')) )
+        .catch((error) => {
+            expect(error).to.be.not.be.undefined;
+            expect((error as Error).message).to.be.equal(expectedError.message);
             done();
         });
     });

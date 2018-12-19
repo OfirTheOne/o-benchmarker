@@ -7,6 +7,8 @@ export type AsyncCallback = (done: DoneFn, ...args: any[]) => any;
 export type SyncCallback = (...args: any[]) => any;
 type FreeCallback = AsyncCallback | SyncCallback;
 
+interface TimerifyOptions { timeout?: number, errorCtor?: new(timeout: number) => Error }
+
 interface Timerify {start: number, end: number, duration: number, resolvedWith: any}
 
 /**
@@ -18,6 +20,8 @@ interface Timerify {start: number, end: number, duration: number, resolvedWith: 
  *  second argument.
  * */
 export class PromiseLand {
+
+    // ================
 
     private static createDoneFn(resolve: ResolveCallback, reject: RejectCallback): DoneFn {
         let canRun = true;
@@ -60,12 +64,26 @@ export class PromiseLand {
         }));
     }
 
-    private static createTimerDoneFn(resolve: ResolveCallback, reject: RejectCallback): DoneFn {
-        let canRun = true;
+    // ================
+
+    private static createTimerDoneFn(resolve: ResolveCallback, reject: RejectCallback, options: TimerifyOptions): DoneFn {
+        let canRun = true
         const start = performance.now();
-        return function (err, args) {
-            if (canRun) {
+        let clock: NodeJS.Timeout; 
+        if(options.timeout && options.timeout > 0) {
+            clock = setTimeout(() => {
                 canRun = false;
+                clearTimeout(clock);
+                clock = undefined;
+                const err = options.errorCtor ? 
+                    new (options.errorCtor)(options.timeout) : new Error('timeout excited !');
+                reject(err);
+            }, options.timeout)
+        }
+        return function (err, args) {
+            if(canRun) {
+                canRun = false;
+                if (clock) { clearTimeout(clock); }
                 const end = performance.now();
                 if(err != undefined) {
                     reject(err)
@@ -88,16 +106,14 @@ export class PromiseLand {
      */
     public static timerifyCallback(cb: AsyncCallback, args: any[]): Promise<Timerify>
     public static timerifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<Timerify>
-    public static timerifyCallback(cb: FreeCallback, args: any[], cbAsync: boolean = true): Promise<Timerify> {
+    public static timerifyCallback(cb: FreeCallback, args: any[], cbAsync: true, options?: TimerifyOptions): Promise<Timerify> 
+    public static timerifyCallback(cb: FreeCallback, args: any[], cbAsync: boolean = true, options: TimerifyOptions = {} ): Promise<Timerify> {
         return (new Promise<Timerify>(function (resolve, reject) {
             try {
                 if(cbAsync) {
-                    const done = PromiseLand.createTimerDoneFn(resolve, reject);
+                    const done = PromiseLand.createTimerDoneFn(resolve, reject, options);
                     (cb as AsyncCallback)(done, ...args);
                 } else {
-                    // const start = performance.now();
-                    // const result = (cb as SyncCallback)(...args);
-                    // const end = performance.now();
                     const res = PromiseLand.timerifySync(cb, args);
                     resolve(res);
                 }
@@ -106,12 +122,13 @@ export class PromiseLand {
             }
         }));
     }
-
+    
+    // ================
 
     public static timerifySync(cb: SyncCallback, args: any[]): Timerify {
         if(typeof cb !== 'function') { return; } 
         const start = performance.now();
-        const result = (cb as SyncCallback)(...args);
+        const result = (cb as SyncCallback)(...args);  
         const end = performance.now();
         
         return {start, end, duration: (end-start), resolvedWith: result}

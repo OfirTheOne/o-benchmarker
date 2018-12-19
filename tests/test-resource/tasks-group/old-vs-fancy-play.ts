@@ -1,4 +1,4 @@
-import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../lib';
+import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../../lib';
 import { randomArray } from './../helpers';
 
 // ******************** tasks setup ************************* //

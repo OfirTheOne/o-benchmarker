@@ -18,18 +18,35 @@ export interface BenchmarkerTaskOptions {
     taskName: string, 
     context?: any,
     async? : boolean, 
+    /**
+     * @description 
+     *  in ms, will time limit the method with the provided value. 
+     *  must be an integer value, larger then 0.
+     *  will be ignored if async != true.
+     */
+    timeout?: number,
     cycles: number, 
     ignore?: boolean
     argsGen?: () => any
 }
 
 
+export interface DurationStats {
+    average: number,
+    min: number, 
+    max: number,
+    // median: number,
+    // histogram: Array<any>,
+}
+
+
 export interface BenchmarkerTaskReport {
-    durationAverage: number, 
+    stats: DurationStats,
+    // config data
     cycles: number, 
+    async: boolean
     taskName: string, 
     methodName: string, 
-    async: boolean
 }
 
 
@@ -64,24 +81,9 @@ export interface BenchmarkerTasksGroupOptions {
 
 // #endregion
 
-
-// export interface BenchmarkerFlags {
-//     minfo: boolean;
-//     printas?: 'json' | 'default';
-// }
-
 export interface BenchTiming {
     start: number,
     end?: number,
     duration: number,
 }
-
-
-// export interface MachineInfo {
-//     cpusModel: string,
-//     numberOfCpus: number,
-//     osPlatform: string, 
-//     osName: string, 
-//     osCpuArch: string 
-// };
 

@@ -1,7 +1,7 @@
 import { ModelParser } from './../../lib/internal/tasks-scanner/bm-model-parser';
 import { expect } from 'chai';
-import { CryptoPlayGroup, FindMaxGroup } from '../tasks-group';
-import { recursiveDeepClone } from '../helpers';
+import { CryptoPlayGroup, FindMaxGroup } from '../test-resource/tasks-group';
+import { recursiveDeepClone } from '../test-resource/helpers';
 
 describe('ModelParser testing', function () {
 

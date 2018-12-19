@@ -37,8 +37,10 @@ export abstract class AbstractBenchmarkEngine implements IBenchmarkEngine {
 
 }
 
-export function createTaskReport(durationAverage: number, cycles: number, taskName: string, methodName: string, async: boolean): BenchmarkerTaskReport {
-    return { durationAverage, cycles, taskName, methodName, async } as BenchmarkerTaskReport;
+export function createTaskReport(cycles: number, taskName: string, methodName: string, async: boolean, 
+    stats: {min: number, max: number}
+    ): BenchmarkerTaskReport {
+    return { cycles, taskName, methodName, async, stats } as BenchmarkerTaskReport;
 }
 export function createTasksGroupReport(groupName: string, groupDescription: string, tasksReports: BenchmarkerTaskReport[], machineInfo: MachineInfo) {
     return { groupName, groupDescription, tasksReports, machineInfo } as BenchmarkerTasksGroupReport;

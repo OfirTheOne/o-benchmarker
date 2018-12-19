@@ -1,6 +1,6 @@
 
 import * as crypto from 'crypto';
-import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../lib';
+import { BenchmarkerTasksGroup, BenchmarkerTask } from './../../../lib';
 import { randomArray } from './../helpers';
 
 // import { CYCLES } from './../../consts';

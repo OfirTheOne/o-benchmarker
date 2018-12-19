@@ -40,3 +40,17 @@ export class RoundCallError extends BaseError {
 
     }
 }
+
+export class TimeoutError extends BaseError {
+    // roundData: { methodName: string, args: any[], sampleId: number | string, async: boolean };  
+    timeLimit: number;
+
+    constructor(timeLimit: number /*, methodName: string, args: any[], sampleId: number | string, async: boolean */) { 
+        super(
+            `Timeout limit of ${timeLimit} exceeded.`,
+            'TimeoutError'
+        );
+        this.timeLimit = timeLimit;
+        // this.roundData = { methodName, args, sampleId, async };
+    }
+}
