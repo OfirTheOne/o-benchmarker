@@ -20,5 +20,8 @@ export declare abstract class AbstractBenchmarkEngine implements IBenchmarkEngin
     abstract measureGroup(tasksGroup: BenchmarkerTasksGroup): void;
     abstract cleanupListeners(): void;
 }
-export declare function createTaskReport(durationAverage: number, cycles: number, taskName: string, methodName: string, async: boolean): BenchmarkerTaskReport;
+export declare function createTaskReport(cycles: number, taskName: string, methodName: string, async: boolean, stats: {
+    min: number;
+    max: number;
+}): BenchmarkerTaskReport;
 export declare function createTasksGroupReport(groupName: string, groupDescription: string, tasksReports: BenchmarkerTaskReport[], machineInfo: MachineInfo): BenchmarkerTasksGroupReport;

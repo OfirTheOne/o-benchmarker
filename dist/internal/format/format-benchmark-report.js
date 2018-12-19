@@ -16,7 +16,10 @@ class StringifyBenchmarkerObjects {
     static formatSingleReport(report, position) {
         return ('   *' + '\n' +
             `   * ${position} - ${this.transform(report.taskName, [colors.green, colors.bold])}` + '\n' +
-            `   *      ${colors.underline('Duration-Average')} : ${report.durationAverage}` + '\n' +
+            `   *      ${colors.underline('Stats')} :` + '\n' +
+            `   *       \u2022 average : ${(report.stats.average)}` + '\n' +
+            `   *       \u2022 min : ${(report.stats.min)}` + '\n' +
+            `   *       \u2022 max : ${(report.stats.max)}` + '\n' +
             `   *      ${colors.underline('Cycles')} : ${report.cycles}` + '\n' +
             `   *      ${colors.underline('Executed-Method')} : ${report.methodName}` + '\n' +
             `   *      ${colors.underline('Async')} : ${(!!report.async)}` + '\n' +

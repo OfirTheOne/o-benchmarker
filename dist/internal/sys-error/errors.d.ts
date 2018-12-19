@@ -18,4 +18,8 @@ export declare class RoundCallError extends BaseError {
     };
     constructor(error: any, method: Function, args: any[], sampleId: number | string, async: boolean);
 }
+export declare class TimeoutError extends BaseError {
+    timeLimit: number;
+    constructor(timeLimit: number);
+}
 export {};

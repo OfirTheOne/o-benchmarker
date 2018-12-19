@@ -16,6 +16,7 @@ export declare class Benchmarker {
     private flags;
     private eventHandler;
     private switchLock;
+    private hooks;
     constructor(flags?: IBenchmarkerFlags);
     on(event: 'benchmarker-done', listener: (args: any) => void): any;
     on(event: 'benchmarker-process-success', listener: (reportsQueue: Queue<BenchmarkerTasksGroupReport>) => void): any;
@@ -23,6 +24,12 @@ export declare class Benchmarker {
     once(event: 'benchmarker-done', listener: (args: any) => void): any;
     once(event: 'benchmarker-process-success', listener: (reportsQueue: Queue<BenchmarkerTasksGroupReport>) => void): any;
     once(event: 'benchmarker-process-error', listener: (error: any) => void): any;
+    onDone(listener: (args?: any) => void): void;
+    onSuccess(listener: (reportsQueue: Queue<BenchmarkerTasksGroupReport>) => void): void;
+    onError(listener: (error: any) => void): void;
+    onceDone(listener: (args?: any) => void): void;
+    onceSuccess(listener: (reportsQueue: Queue<BenchmarkerTasksGroupReport>) => void): void;
+    onceError(listener: (error: any) => void): void;
     echo(tasksGroups: BenchmarkerTasksGroup[]): void;
     getEngine(): Readonly<IBenchmarkEngine>;
     process(tasksGroups: BenchmarkerTasksGroup[], handler: EngineProcessHandler): void;

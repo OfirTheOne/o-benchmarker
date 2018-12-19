@@ -10,6 +10,7 @@ const perf_hooks_1 = require("perf_hooks");
  *  second argument.
  * */
 class PromiseLand {
+    // ================
     static createDoneFn(resolve, reject) {
         let canRun = true;
         return function (err, args) {
@@ -41,12 +42,27 @@ class PromiseLand {
             }
         }));
     }
-    static createTimerDoneFn(resolve, reject) {
+    // ================
+    static createTimerDoneFn(resolve, reject, options) {
         let canRun = true;
         const start = perf_hooks_1.performance.now();
+        let clock;
+        if (options.timeout && options.timeout > 0) {
+            clock = setTimeout(() => {
+                canRun = false;
+                clearTimeout(clock);
+                clock = undefined;
+                const err = options.errorCtor ?
+                    new (options.errorCtor)(options.timeout) : new Error('timeout excited !');
+                reject(err);
+            }, options.timeout);
+        }
         return function (err, args) {
             if (canRun) {
                 canRun = false;
+                if (clock) {
+                    clearTimeout(clock);
+                }
                 const end = perf_hooks_1.performance.now();
                 if (err != undefined) {
                     reject(err);
@@ -57,17 +73,14 @@ class PromiseLand {
             }
         };
     }
-    static timerifyCallback(cb, args, cbAsync = true) {
+    static timerifyCallback(cb, args, cbAsync = true, options = {}) {
         return (new Promise(function (resolve, reject) {
             try {
                 if (cbAsync) {
-                    const done = PromiseLand.createTimerDoneFn(resolve, reject);
+                    const done = PromiseLand.createTimerDoneFn(resolve, reject, options);
                     cb(done, ...args);
                 }
                 else {
-                    // const start = performance.now();
-                    // const result = (cb as SyncCallback)(...args);
-                    // const end = performance.now();
                     const res = PromiseLand.timerifySync(cb, args);
                     resolve(res);
                 }
@@ -77,6 +90,7 @@ class PromiseLand {
             }
         }));
     }
+    // ================
     static timerifySync(cb, args) {
         if (typeof cb !== 'function') {
             return;

@@ -1,6 +1,11 @@
 declare type DoneFn = (err?: any, args?: any) => void;
 export declare type AsyncCallback = (done: DoneFn, ...args: any[]) => any;
 export declare type SyncCallback = (...args: any[]) => any;
+declare type FreeCallback = AsyncCallback | SyncCallback;
+interface TimerifyOptions {
+    timeout?: number;
+    errorCtor?: new (timeout: number) => Error;
+}
 interface Timerify {
     start: number;
     end: number;
@@ -42,6 +47,7 @@ export declare class PromiseLand {
      */
     static timerifyCallback(cb: AsyncCallback, args: any[]): Promise<Timerify>;
     static timerifyCallback(cb: SyncCallback, args: any[], cbAsync: false): Promise<Timerify>;
+    static timerifyCallback(cb: FreeCallback, args: any[], cbAsync: true, options?: TimerifyOptions): Promise<Timerify>;
     static timerifySync(cb: SyncCallback, args: any[]): Timerify;
 }
 export {};

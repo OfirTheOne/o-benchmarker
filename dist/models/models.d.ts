@@ -9,16 +9,28 @@ export interface BenchmarkerTaskOptions {
     taskName: string;
     context?: any;
     async?: boolean;
+    /**
+     * @description
+     *  in ms, will time limit the method with the provided value.
+     *  must be an integer value, larger then 0.
+     *  will be ignored if async != true.
+     */
+    timeout?: number;
     cycles: number;
     ignore?: boolean;
     argsGen?: () => any;
 }
+export interface DurationStats {
+    average: number;
+    min: number;
+    max: number;
+}
 export interface BenchmarkerTaskReport {
-    durationAverage: number;
+    stats: DurationStats;
     cycles: number;
+    async: boolean;
     taskName: string;
     methodName: string;
-    async: boolean;
 }
 export interface BenchmarkerTasksGroup {
     groupName?: string;

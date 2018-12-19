@@ -9,10 +9,12 @@ If you think of multiple ways to implement a specific action, or you found a cou
 
 ### **Features** 
 
-* build-in typescript support.
-* benchmark multiple functions to measure performance as a group.
-* benchmark sync and async functions and measure performance against each other.
-* build-in support by design of benchmarking Express API routes (using mocking tool, E.g supertest). 
+* High resolution performance measuring.
+* Tasks are benchmarked serially, providing accurate reporting in a human-readable format.
+* Build-in typescript support.
+* Benchmark multiple functions to measure performance as a group.
+* Benchmark sync and async functions and measure performance against each other.
+* Build-in support by design of benchmarking Express API routes (using mocking tool, E.g supertest). 
 
 
 

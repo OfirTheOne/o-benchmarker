@@ -12,6 +12,7 @@ ModelParser.benchmarkerTaskOptionsScheme = joi.object().keys({
     cycles: joi.number().integer().min(1).strict().required(),
     context: joi.any(),
     async: joi.boolean().strict(),
+    timeout: joi.number().integer().min(1).strict(),
     ignore: joi.boolean().strict(),
     argsGen: joi.func(),
 }); //.strict();

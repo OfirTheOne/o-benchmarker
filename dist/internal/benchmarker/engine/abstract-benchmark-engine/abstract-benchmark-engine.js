@@ -18,8 +18,8 @@ class AbstractBenchmarkEngine {
     }
 }
 exports.AbstractBenchmarkEngine = AbstractBenchmarkEngine;
-function createTaskReport(durationAverage, cycles, taskName, methodName, async) {
-    return { durationAverage, cycles, taskName, methodName, async };
+function createTaskReport(cycles, taskName, methodName, async, stats) {
+    return { cycles, taskName, methodName, async, stats };
 }
 exports.createTaskReport = createTaskReport;
 function createTasksGroupReport(groupName, groupDescription, tasksReports, machineInfo) {

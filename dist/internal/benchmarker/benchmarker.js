@@ -8,7 +8,12 @@ const queue_1 = require("../utils/queue");
 const switch_lock_1 = require("./../utils/switch-lock");
 class Benchmarker {
     constructor(flags) {
-        this.switchLock = new switch_lock_1.SwitchLock(); // process
+        this.switchLock = new switch_lock_1.SwitchLock();
+        this.hooks = {
+            done: 'benchmarker-done',
+            success: 'benchmarker-process-success',
+            error: 'benchmarker-process-error'
+        };
         this.flags = new internal_1.BenchmarkerFlags(flags);
         this.eventHandler = new events_1.EventEmitter();
         this.engine = Object.freeze(new engine_1.PromiseBaseBenchmarkEngine());
@@ -19,6 +24,15 @@ class Benchmarker {
     once(event, listener) {
         this.eventHandler.once(event, listener);
     }
+    // #endregion
+    // #region - hooks
+    onDone(listener) { this.on('benchmarker-done', listener); }
+    onSuccess(listener) { this.on('benchmarker-process-success', listener); }
+    onError(listener) { this.on('benchmarker-process-error', listener); }
+    onceDone(listener) { this.once('benchmarker-done', listener); }
+    onceSuccess(listener) { this.once('benchmarker-process-success', listener); }
+    onceError(listener) { this.once('benchmarker-process-error', listener); }
+    // #endregion
     // #region - public
     echo(tasksGroups) {
         this.process(tasksGroups, (err, res) => {
@@ -49,7 +63,7 @@ class Benchmarker {
         const reportQueue = new queue_1.Queue();
         // if the filtered array is empty, emitting success with empty queue and unlocking.
         if (filteredTasksGroups.length == 0) {
-            this.eventHandler.emit('benchmarker-done', reportQueue);
+            this.eventHandler.emit(this.hooks.done, reportQueue);
             this.switchLock.unlock();
             return;
         }
@@ -62,7 +76,7 @@ class Benchmarker {
                 this.engine.measureGroup(tasksGroup);
             }
             else { // the queue is empty, process finished.
-                this.eventHandler.emit('benchmarker-done');
+                this.eventHandler.emit(this.hooks.done);
                 this.switchLock.unlock();
             }
         };
@@ -71,7 +85,7 @@ class Benchmarker {
             if (handler) {
                 handler(undefined, { indexInQueue, tasksGroup, groupReport });
             }
-            this.eventHandler.emit('benchmarker-process-success', reportQueue);
+            this.eventHandler.emit(this.hooks.success, reportQueue);
             nextInQueue();
         });
         this.engine.on(this.engine.events.error, (error) => {
@@ -84,7 +98,7 @@ class Benchmarker {
         this.engine.measureGroup(tasksGroup);
     }
     // #endregion
-    // #region
+    // #region - private
     writeResult(groupReport) {
         if (this.flags.printas == 'json') {
             console.log(format_benchmark_report_1.StringifyBenchmarkerObjects.groupReportsAsJson(groupReport, { machineInfo: this.flags.minfo }));

@@ -5,11 +5,11 @@ const os = require("os");
 class MachineInfo {
     constructor() {
         const cpus = os.cpus();
-        this.cpusModel = cpus[0].model; // Intel ...
-        this.numberOfCpus = cpus.length; // 4
-        this.osPlatform = os.platform(); // win32
-        this.osName = os.type(); // Windows_NT
-        this.osCpuArch = os.arch(); //x64
+        this.cpusModel = cpus[0].model;
+        this.numberOfCpus = cpus.length;
+        this.osPlatform = os.platform();
+        this.osName = os.type();
+        this.osCpuArch = os.arch();
         this._env = {
             nodeVersion: process.versions.node,
             pid: process.pid,
